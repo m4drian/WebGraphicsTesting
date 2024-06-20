@@ -7,3 +7,4 @@
 - webgl-context
 - benchmark
 - vite
+- three
