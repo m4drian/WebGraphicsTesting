@@ -5,6 +5,6 @@
 - jsdoc
 - wgpu
 - webgl-context
-- benchmark
 - vite
 - three
+- eslint
