@@ -2,9 +2,10 @@
 
 # Used Libraries
 
-- jsdoc
+- three
 - wgpu
 - webgl-context
+- jsdoc
 - vite
-- three
 - eslint
+- prettier

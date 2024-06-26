@@ -58,7 +58,7 @@ async function animate(scene, camera, renderer, rendererType, stats0, stats1, st
         // Rotate
         scene.traverse((object) => {
             if (object instanceof THREE.Mesh) {
-                object.rotation.x += 0.001;
+                object.rotation.x += 0.005;
                 object.rotation.y += 0.01;
             }
         });
@@ -88,7 +88,7 @@ export function loadGeometryBenchmark(rendererType, stats0, stats1, stats2) {
         console.info('WebGL selected');
         renderer = setupWebGLRenderer();
     } else {
-        console.info('WebGPU selected');
+        console.info('WebGPU selected'); 
         renderer = setupWebGPURenderer();
     }
     createGeometry(scene);
