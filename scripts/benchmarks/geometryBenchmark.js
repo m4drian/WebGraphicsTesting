@@ -44,38 +44,38 @@ function createGeometry(scene) {
     }
 }
 
-async function animate(scene, camera, renderer, rendererType, stats0, stats1, stats2) {
-    async function render() {
+function animate(scene, camera, renderer, rendererType, stats0, stats1, stats2) {
+    function render() {
         requestAnimationFrame(render);
 
-        if (rendererType === 'webgl')
+        if (true)//rendererType === 'webgl')
         {
-            await renderer.clear();
+            renderer.clear();
         } else {
-            await renderer.clearAsync();
+            renderer.clearAsync();
         }
 
         // Rotate
-        scene.traverse((object) => {
+        /*scene.traverse((object) => {
             if (object instanceof THREE.Mesh) {
                 object.rotation.x += 0.005;
                 object.rotation.y += 0.01;
             }
-        });
+        });*/
 
-        if (rendererType === 'webgl')
+        if (true)//rendererType === 'webgl')
         {
-            await renderer.render(scene, camera);
+            renderer.render(scene, camera);
         } else {
-            await renderer.renderAsync(scene, camera);
+            renderer.renderAsync(scene, camera);
         }
 
         stats0.update();
-        stats1.update();
-        stats2.update();
+        //stats1.update();
+        //stats2.update();
     }
     
-    await render();
+    render();
 }
 
 export function loadGeometryBenchmark(rendererType, stats0, stats1, stats2) {
