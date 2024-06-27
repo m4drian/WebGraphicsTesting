@@ -12,9 +12,8 @@
   "author": "Adrian Mikołajczyk",
   "license": "GPL-2.0-only",
   "devDependencies": {
-    "@eslint/js": "^9.5.0",
+    "@eslint/js": "^8.0.1",
     "@eslint/core": "^0.1.0",
-    "@types/playcanvas": "^1.23.0",
     "@types/three": "^0.165.0",
     "@types/webgl2": "^0.0.11",
     "eslint-config-standard": "^17.1.0",
