@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 
-function createPlayCanvasApp() {
+export function createPlayCanvasApp() {
   const canvas = document.createElement('canvas');
   document.body.appendChild(canvas);
 
@@ -37,5 +37,3 @@ function createPlayCanvasApp() {
 
   app.start();
 }
-
-export default createPlayCanvasApp;
