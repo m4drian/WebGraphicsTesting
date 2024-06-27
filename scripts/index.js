@@ -1,4 +1,4 @@
-import { loadGeometryBenchmark } from './benchmarks/geometryBenchmark';
+import { loadGeometryBenchmark } from './benchmarks/geometryThreeBenchmark';
 import { loadGeometryBenchmark2 } from './benchmarks/testBench';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
