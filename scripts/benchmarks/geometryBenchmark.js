@@ -71,8 +71,8 @@ function animate(scene, camera, renderer, rendererType, stats0, stats1, stats2) 
         }
 
         stats0.update();
-        //stats1.update();
-        //stats2.update();
+        stats1.update();
+        stats2.update();
     }
     
     render();
