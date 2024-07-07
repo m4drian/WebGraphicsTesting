@@ -1,6 +1,7 @@
 import { loadGeometryBenchmark } from './benchmarks/geometryThreeBenchmark';
 import { loadGeometryBenchmark2 } from './benchmarks/testBench';
-import { createPlayCanvasApp } from './benchmarks/playCanvasBenchmark';
+import { loadPlayCanvasBenchmark } from './benchmarks/playCanvasBenchmark';
+import { loadBabylonBenchmark } from './benchmarks/babylonBenchmark';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 const apiSelector = document.getElementById('api-selector');
@@ -34,9 +35,10 @@ confirmButton.addEventListener('click', () => {
     if (selectedBenchmark === 'geometry') {
         loadGeometryBenchmark(selectedApi, stats0, stats1, stats2);
     } else if (selectedBenchmark === 'phong') {
-        loadGeometryBenchmark2(stats0, stats1, stats2);
+        const canvas = document.getElementById('app');
+        loadGeometryBenchmark2(canvas);
     } else if (selectedBenchmark === 'texture-mapping') {
-        createPlayCanvasApp();
+        loadPlayCanvasBenchmark();
     } else {
         console.warn('Nothing selected');
     }

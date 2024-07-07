@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 
-export function createPlayCanvasApp() {
+export function loadPlayCanvasBenchmark() {
   const canvas = document.createElement('canvas');
   document.body.appendChild(canvas);
 
@@ -8,8 +8,8 @@ export function createPlayCanvasApp() {
 
   // Configure App
   app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
-  app.setCanvasResolution(pc.RESOLUTION_AUTO);
-  window.addEventListener('resize', () => app.resizeCanvas());
+  app.setCanvasResolution(pc.RESOLUTION_FIXED, 1600, 900);
+  //window.addEventListener('resize', () => app.resizeCanvas());
 
   // Create Box Entity
   const box = new pc.Entity('cube');

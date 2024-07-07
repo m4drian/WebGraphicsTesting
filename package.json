@@ -24,6 +24,7 @@
     "webgl-context": "^2.2.0"
   },
   "dependencies": {
+    "babylonjs": "^7.12.0",
     "jsdoc": "^4.0.3",
     "playcanvas": "^1.71.6",
     "stats.js": "^0.17.0",
