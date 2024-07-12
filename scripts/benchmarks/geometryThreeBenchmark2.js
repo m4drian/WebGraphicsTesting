@@ -1,14 +1,14 @@
 import * as THREE from 'three';
+import { MeshNormalNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
-import { getMonochromaticColor, getRandomBaseColor } from '../colorScheme.js';
 
 function initGeometries() {
-  const geometry = new THREE.SphereGeometry(1, 32, 16); // can add more geometries
+  const geometry = new THREE.SphereGeometry(1, 32, 16);//THREE.ConeGeometry(1, 2, 32, 16);// THREE.SphereGeometry(1, 32, 16); // can add more geometries
   return geometry;
 }
 
 function createMaterial() {
-  const material = new THREE.MeshNormalNodeMaterial(); // Unlit material based on normals
+  const material = new MeshNormalNodeMaterial(); // Unlit material based on normals
   return material;
 }
 
@@ -22,9 +22,6 @@ function initMesh(scene, geometry, numObjects) {
     newMesh.position.y = Math.random() * 110 - 55;
     newMesh.position.z = Math.random() * 100 - 80;
     scene.add(newMesh);
-
-    // color scheme
-    newMesh.material.color = new THREE.Color(getMonochromaticColor(getRandomBaseColor(), 50));
   }
 }
 
@@ -45,68 +42,56 @@ function setupCamera() {
     return camera;
 }
 
-function setupWebGLRenderer() {
-    const renderer = new THREE.WebGLRenderer( { antialias: true } );
+function setupRenderer(myCanvas, selectWebGL) {
+    const renderer = new WebGPURenderer( { canvas: myCanvas, antialias: true, forceWebGL: selectWebGL } );
     renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( 1600, 900 );
+    renderer.setSize( 1440, 810 );
     document.body.appendChild(renderer.domElement);
     return renderer;
 }
 
-function setupWebGPURenderer() {
-    const renderer = new WebGPURenderer( { antialias: true } );
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( 1600, 900 );
-    document.body.appendChild( renderer.domElement );
-    return renderer;
-}
-function animate(scene, camera, renderer, rendererType, stats0, stats1, stats2) {
+function animate(scene, camera, renderer, rendererType, stats0) {
   function render() {
     requestAnimationFrame(render);
 
-    if (rendererType === 'webgl') {
-      renderer.clear();
-    } else {
-      renderer.clearAsync();
-    }
+    //renderer.clearAsync();
 
     // Update object rotations (assuming you want this)
     scene.traverse((object) => {
       if (object instanceof THREE.Mesh) {
-        object.rotation.add(randomizeRotationSpeed()); // Apply random rotation speed
+        const rotationSpeed = randomizeRotationSpeed();
+        object.rotation.x += rotationSpeed.x;
+        object.rotation.y += rotationSpeed.y;
+        object.rotation.z += rotationSpeed.z;
       }
     });
 
-    if (rendererType === 'webgl') {
-      renderer.render(scene, camera);
-    } else {
-      renderer.renderAsync(scene, camera);
-    }
+    renderer.renderAsync(scene, camera);
 
     stats0.update();
-    stats1.update();
-    stats2.update();
+    //stats1.update();
+    //stats2.update();
   }
 
   render();
 }
 
-export function loadGeometryBenchmark2(rendererType, stats0, stats1, stats2) {
+export function loadGeometryBenchmark2(myCanvas, rendererType, stats0) {
   const scene = setupScene();
   const camera = setupCamera();
   let renderer = null;
 
   if (rendererType === 'webgl') {
     console.info('WebGL selected');
-    renderer = setupWebGLRenderer();
+    renderer = setupRenderer(myCanvas, true);
   } else {
     console.info('WebGPU selected');
-    renderer = setupWebGPURenderer();
+    renderer = setupRenderer(myCanvas, false);
   }
 
   const geometry = initGeometries();
-  const numObjects = 5000; // Number of objects to create
+  const numObjects = 50; // Number of objects to create
   initMesh(scene, geometry, numObjects);
 
-  animate(scene, camera, renderer, rendererType, stats0, stats1, stats2);
+  animate(scene, camera, renderer, rendererType, stats0);
 }

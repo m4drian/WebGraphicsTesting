@@ -8,17 +8,21 @@
     <title>Web Graphics Testing</title>
 </head>
 <body>
-    <select id="api-selector">
-        <option value="webgl">WebGL</option>
-        <option value="webgpu">WebGPU</option>
-    </select>
-    <select id="benchmark-selector">
-        <option value="geometry">Geometry</option>
-        <option value="phong">Phong Shading</option>
-        <option value="texture-mapping">Texture Mapping</option>
-    </select>
-    <button id="confirm-button">Run Benchmark</button>
-    <div id="app"></div>
+    <div id="button-container" style="position: relative;">
+        <select id="api-selector">
+            <option value="webgl">WebGL</option>
+            <option value="webgpu">WebGPU</option>
+        </select>
+        <select id="benchmark-selector">
+            <option value="geometry1">Geometry1</option>
+            <option value="geometry2">Geometry2</option>
+            <option value="babylon1">Babylon1</option>
+            <option value="babylon2">Babylon2</option>
+            <option value="play-canvas">Play Canvas</option>
+        </select>
+        <button id="confirm-button">Run Benchmark</button>
+    </div>
+    <canvas id="app" width="1440" height="810"></canvas>
     <script type="module" src="scripts/index.js"></script>
 </body>
 </html>
