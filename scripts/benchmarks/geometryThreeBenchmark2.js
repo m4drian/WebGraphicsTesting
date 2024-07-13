@@ -61,7 +61,7 @@ function setupRenderer(myCanvas, rendererType) {
   return renderer;
 }
 
-async function animate(scene, camera, renderer, stats0, stats) {
+async function animate(scene, camera, renderer, stats) {
   //renderer.clearAsync();
 
   // Update object rotations
@@ -76,11 +76,10 @@ async function animate(scene, camera, renderer, stats0, stats) {
 
   await renderer.renderAsync(scene, camera);
 
-  stats0.update();
   stats.update();
 }
 
-export function loadGeometryBenchmark2(rendererType, stats0, statsGL ) {
+export function loadGeometryBenchmark2(rendererType, statsGL) {
   // canvas
   let canvas = document.createElement('canvas');
   canvas.width = 1440;
@@ -101,7 +100,7 @@ export function loadGeometryBenchmark2(rendererType, stats0, statsGL ) {
   statsGL.init( renderer );
 
   // animate
-  renderer.setAnimationLoop(() => animate( scene, camera, renderer, stats0, statsGL ));
+  renderer.setAnimationLoop(() => animate( scene, camera, renderer, statsGL ));
 
   // cleanup
   setTimeout(() => {

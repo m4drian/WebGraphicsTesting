@@ -17,7 +17,7 @@ async function createEngine(canvas, rendererType) {
   }
 }
 
-export function loadBabylonBenchmark(rendererType, stats, statsGL) {
+export function loadBabylonBenchmark(rendererType, statsGL) {
   console.log(BABYLON)
 
   let canvas = document.createElement('canvas');
@@ -59,7 +59,6 @@ export function loadBabylonBenchmark(rendererType, stats, statsGL) {
 
         engine.runRenderLoop(() => {
           scene.render();
-          stats.update();
           statsGL.update();
         })
 

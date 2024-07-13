@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 
-export function loadPlayCanvasBenchmark(selectedApi, stats, statsGL) {
+export function loadPlayCanvasBenchmark(selectedApi, statsGL) {
   console.info('Selected API: ', selectedApi);
   let canvas = document.createElement('canvas');
   canvas.width = 1440;
@@ -38,8 +38,7 @@ export function loadPlayCanvasBenchmark(selectedApi, stats, statsGL) {
 
   // Rotate Box on Update
   app.on('update', dt => { 
-    box.rotate(10 * dt, 20 * dt, 30 * dt) 
-    stats.update();
+    box.rotate(10 * dt, 20 * dt, 30 * dt)
     statsGL.update();
   });
 

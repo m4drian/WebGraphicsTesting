@@ -29,7 +29,6 @@
     "lil-gui": "^0.19.2",
     "playcanvas": "^1.71.6",
     "stats-gl": "^2.2.8",
-    "stats.js": "^0.17.0",
     "three": "^0.165.0",
     "webgl-context": "^2.2.0"
   }
