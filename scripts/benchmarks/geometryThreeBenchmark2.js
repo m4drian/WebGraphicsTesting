@@ -3,8 +3,11 @@ import { MeshNormalNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 function initGeometries() {
-  const geometry = new THREE.SphereGeometry(1, 32, 16);//THREE.ConeGeometry(1, 2, 32, 16);// THREE.SphereGeometry(1, 32, 16); // can add more geometries
-  return geometry;
+  const geometries = [
+    new THREE.SphereGeometry(1, 32, 16), //similar amount of vertices and faces
+    new THREE.ConeGeometry(1, 2, 32, 16),
+  ];
+  return geometries;
 }
 
 function createMaterial() {
@@ -12,7 +15,7 @@ function createMaterial() {
   return material;
 }
 
-function initMesh(scene, geometry, numObjects) {
+function initMeshes(scene, geometry, numObjects) {
   const material = createMaterial();
   const mesh = new THREE.Mesh(geometry, material);
 
@@ -76,22 +79,28 @@ function animate(scene, camera, renderer, rendererType, stats0) {
   render();
 }
 
-export function loadGeometryBenchmark2(myCanvas, rendererType, stats0) {
+export function loadGeometryBenchmark2(rendererType, stats0) {
+  let canvas = document.createElement('canvas');
+  canvas.width = 1440;
+  canvas.height = 810;
+  canvas.id = "mycanvas";
+  document.body.appendChild(canvas);
+
   const scene = setupScene();
   const camera = setupCamera();
   let renderer = null;
 
   if (rendererType === 'webgl') {
     console.info('WebGL selected');
-    renderer = setupRenderer(myCanvas, true);
+    renderer = setupRenderer(canvas, true);
   } else {
     console.info('WebGPU selected');
-    renderer = setupRenderer(myCanvas, false);
+    renderer = setupRenderer(canvas, false);
   }
 
-  const geometry = initGeometries();
+  const geometries = initGeometries();
   const numObjects = 50; // Number of objects to create
-  initMesh(scene, geometry, numObjects);
+  initMeshes(scene, geometries, numObjects);
 
   animate(scene, camera, renderer, rendererType, stats0);
 }

@@ -7,7 +7,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js';
 const apiSelector = document.getElementById('api-selector');
 const benchmarkSelector = document.getElementById('benchmark-selector');
 const confirmButton = document.getElementById('confirm-button');
-const canvas = document.getElementById("app");
+//const canvas = document.getElementById("app");
 
 var stats0 = new Stats();
 stats0.showPanel( 0 );
@@ -28,19 +28,17 @@ confirmButton.addEventListener('click', () => {
     const selectedBenchmark = benchmarkSelector.value;
     const selectedApi = apiSelector.value;
 
-    canvas.innerHTML = '';
-
     // Load the specific benchmark based on selection
     if (selectedBenchmark === 'geometry1') {
-        loadGeometryBenchmark(canvas, selectedApi, stats0, stats1, stats2);
+        loadGeometryBenchmark(selectedApi, stats0, stats1, stats2);
     } else if (selectedBenchmark === 'geometry2') {
-        loadGeometryBenchmark2(canvas, selectedApi, stats0);
+        loadGeometryBenchmark2(selectedApi, stats0);
     } else if (selectedBenchmark === 'babylon1') {
-        loadPlayCanvasBenchmark(canvas, selectedApi);
+        loadPlayCanvasBenchmark(selectedApi);
     } else if (selectedBenchmark === 'babylon2') {
-        loadBabylonBenchmark(canvas, selectedApi);
+        loadBabylonBenchmark(selectedApi);
     } else if (selectedBenchmark === 'play-canvas') {
-        loadPlayCanvasBenchmark(canvas, selectedApi);
+        loadPlayCanvasBenchmark(selectedApi);
     } else {
         console.warn('Nothing selected');
     }

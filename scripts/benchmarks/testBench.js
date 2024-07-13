@@ -1,6 +1,10 @@
 export function loadGeometryBenchmark2(stats0, stats1, stats2) {
 
-    const canvas = document.getElementById('canvas');
+    let canvas = document.createElement('canvas');
+    canvas.width = 1440;
+    canvas.height = 810;
+    canvas.id = "mycanvas";
+    document.body.appendChild(canvas);
     const gl = canvas.getContext('webgl');
 
     canvas.width = window.innerWidth;

@@ -1,12 +1,11 @@
 import * as BABYLON from '@babylonjs/core';
 import * as BabylonMaterials from '@babylonjs/materials';
 
-console.log(BABYLON)
-
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {
     console.info('WebGL selected');
-    return new BABYLON.Engine(canvas, true);
+    const engine = new BABYLON.Engine(canvas, true);
+    return engine
   } else if (rendererType === 'webgpu') {
     console.info('WebGPU selected');
     const engine = new BABYLON.WebGPUEngine(canvas);
@@ -18,16 +17,25 @@ async function createEngine(canvas, rendererType) {
   }
 }
 
-export function loadBabylonBenchmark(canvas, rendererType) {
+export function loadBabylonBenchmark(rendererType) {
+  console.log(BABYLON)
+
+  let canvas = document.createElement('canvas');
+  canvas.width = 1440;
+  canvas.height = 810;
+  canvas.id = "mycanvas";
+  document.body.appendChild(canvas);
+
   // Load the 3D engine
   createEngine(canvas, rendererType)
     .then(engine => {
       if (engine) {
-        const scene = new BABYLON.Scene(engine);
+        let scene = new BABYLON.Scene(engine);
 
         const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
         camera.setTarget(BABYLON.Vector3.Zero());
-        camera.attachControl(canvas, false);
+        camera.detachControl();
+        //camera.attachControl(canvas, true);
       
         const box = BABYLON.MeshBuilder.CreateBox("box", { size: 2 }, scene);
       
@@ -44,7 +52,6 @@ export function loadBabylonBenchmark(canvas, rendererType) {
           engine.resize();
         });*/
       
-        //const emissive = scene.getTextureByName("BoomBox_Mat (Normal)");
         var normalMaterial = new BabylonMaterials.NormalMaterial("normalMat", scene);
         box.material = normalMaterial;
         box.material.disableLighting = true; //unlit material
@@ -52,6 +59,15 @@ export function loadBabylonBenchmark(canvas, rendererType) {
         engine.runRenderLoop(() => {
           scene.render();
         })
+
+        setTimeout(() => {
+          engine.stopRenderLoop();
+          scene.dispose();
+          scene = null;
+          engine.dispose();
+          engine = null;
+          document.body.removeChild(canvas);
+        }, 6000);
       
         return scene;
       }

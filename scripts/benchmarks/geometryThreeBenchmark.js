@@ -3,37 +3,40 @@ import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 //import { getMonochromaticColor, getRandomBaseColor } from '../colorScheme.js';
 
 function setupScene() {
-    const scene = new THREE.Scene();
+    let scene = new THREE.Scene();
     scene.background = new THREE.Color("#0d0c18");
     return scene;
 }
 
 function setupCamera() {
-    const camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 1000);
+    let camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 1000);
     camera.position.set(1, 1, 100);
     camera.lookAt(0, 0, 0);
     return camera;
 }
 
-function setupWebGLRenderer(myCanvas) {
-    const renderer = new THREE.WebGLRenderer( { canvas: myCanvas, antialias: true } );
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( 1440, 810 );
-    return renderer;
-}
+function setupRenderer(myCanvas, rendererType) {
+    let renderer = null;
+    console.info(rendererType, 'selected');
 
-function setupWebGPURenderer(myCanvas) {
-    const renderer = new WebGPURenderer( { canvas: myCanvas, antialias: true } );
+    if (rendererType === 'webgl') {
+        renderer = new THREE.WebGLRenderer( { canvas: myCanvas, antialias: true } );
+    } else {
+        renderer = new WebGPURenderer( { canvas: myCanvas, antialias: true } );
+    }
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( 1440, 810 );
     return renderer;
 }
 
 function createGeometry(scene) {
-    const geometry = new THREE.SphereGeometry( 1, 32, 16 );// verts:482, Edges: 992, Faces: 512, Tris: 960
-    const NUM_OBJECTS = 5000;
-    for (let i = 0; i < NUM_OBJECTS; i++) {
-        const material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }); //MeshBasicMaterial color: getMonochromaticColor(getRandomBaseColor(), 50)
+    const geometry = new THREE.ConeGeometry(1, 2, 32, 16)
+    //const geometry = new THREE.SphereGeometry( 1, 32, 16 ); //verts:482, Edges: 992, Faces: 512, Tris: 960
+    const numOfObjects = 5000;
+    //const material = new THREE.MeshBasicMaterial({color: getMonochromaticColor(getRandomBaseColor(), 50)})
+    const material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
+
+    for (let i = 0; i < numOfObjects; i++) {
         const cubeMesh = new THREE.Mesh(geometry, material);
         cubeMesh.position.x = Math.random() * 200 - 105;
         cubeMesh.position.y = Math.random() * 110 - 55;
@@ -42,53 +45,56 @@ function createGeometry(scene) {
     }
 }
 
-function animate(scene, camera, renderer, rendererType, stats0, stats1, stats2) {
-    function render() {
-        requestAnimationFrame(render);
+async function animate(scene, camera, renderer, rendererType, stats0, stats1, stats2) {
 
-        if (rendererType === 'webgl')
-        {
-            renderer.clear();
-        } else {
-            renderer.clearAsync();
-        }
-
-        // Rotate
-        /*scene.traverse((object) => {
-            if (object instanceof THREE.Mesh) {
-                object.rotation.x += 0.005;
-                object.rotation.y += 0.01;
-            }
-        });*/
-
-        if (rendererType === 'webgl')
-        {
-            renderer.render(scene, camera);
-        } else {
-            renderer.renderAsync(scene, camera);
-        }
-
-        stats0.update();
-        stats1.update();
-        stats2.update();
-    }
-    
-    render();
-}
-
-export function loadGeometryBenchmark(canvas, rendererType, stats0, stats1, stats2) {
-
-    const scene = setupScene();
-    const camera = setupCamera();
-    let renderer = null
     if (rendererType === 'webgl')
     {
-        console.info('WebGL selected');
-        renderer = setupWebGLRenderer(canvas);
+        renderer.clear();
     } else {
-        console.info('WebGPU selected'); 
-        renderer = setupWebGPURenderer(canvas);
+        renderer.clearAsync();
     }
+
+    // Rotate
+    scene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+            object.rotation.x += 0.005;
+            object.rotation.y += 0.01;
+        }
+    });
+
+    if (rendererType === 'webgl')
+    {
+        renderer.render(scene, camera);
+    } else {
+        await renderer.renderAsync(scene, camera);
+    }
+
+    stats0.update();
+    stats1.update();
+    stats2.update();
+}
+
+export function loadGeometryBenchmark(rendererType, stats0, stats1, stats2) {
+    let canvas = document.createElement('canvas');
+    canvas.width = 1440;
+    canvas.height = 810;
+    canvas.id = "mycanvas";
+    document.body.appendChild(canvas);
+
+    let camera = setupCamera();
+    let renderer = setupRenderer(canvas, rendererType);
+    let scene = setupScene();
+
     createGeometry(scene);
-    animate(scene, camera, renderer, rendererType, stats0, stats1, stats2);
+    renderer.setAnimationLoop(() => animate(scene, camera, renderer, rendererType, stats0, stats1, stats2));
+
+    setTimeout(() => {
+        console.info('benchmark stopped');
+        renderer.setAnimationLoop(null); 
+        scene = null;
+        camera = null;
+        renderer.dispose();
+        renderer = null;
+        document.body.removeChild(canvas);
+    }, 30000);
 }

@@ -1,7 +1,12 @@
 import * as pc from 'playcanvas';
 
-export function loadPlayCanvasBenchmark(canvas, selectedApi) {
+export function loadPlayCanvasBenchmark(selectedApi) {
   console.info('Selected API: ', selectedApi);
+  let canvas = document.createElement('canvas');
+  canvas.width = 1440;
+  canvas.height = 810;
+  canvas.id = "mycanvas";
+  document.body.appendChild(canvas);
   
   const app = new pc.Application(canvas);
 
@@ -35,4 +40,10 @@ export function loadPlayCanvasBenchmark(canvas, selectedApi) {
   app.on('update', dt => box.rotate(10 * dt, 20 * dt, 30 * dt));
 
   app.start();
+
+  setTimeout(() => {
+    console.info('benchmark stopped');
+    app.destroy();
+    document.body.removeChild(canvas);
+}, 6000);
 }
