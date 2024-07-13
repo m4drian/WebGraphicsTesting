@@ -45,7 +45,7 @@ function createGeometry(scene) {
     }
 }
 
-async function animate(scene, camera, renderer, rendererType, stats0, stats1, stats2) {
+async function animate(scene, camera, renderer, rendererType, stats0, statsGL ) {
 
     if (rendererType === 'webgl')
     {
@@ -70,11 +70,10 @@ async function animate(scene, camera, renderer, rendererType, stats0, stats1, st
     }
 
     stats0.update();
-    stats1.update();
-    stats2.update();
+    statsGL.update();
 }
 
-export function loadGeometryBenchmark(rendererType, stats0, stats1, stats2) {
+export function loadGeometryBenchmark(rendererType, stats0, statsGL ) {
     let canvas = document.createElement('canvas');
     canvas.width = 1440;
     canvas.height = 810;
@@ -85,8 +84,11 @@ export function loadGeometryBenchmark(rendererType, stats0, stats1, stats2) {
     let renderer = setupRenderer(canvas, rendererType);
     let scene = setupScene();
 
+    // stats
+    statsGL.init( renderer );
+
     createGeometry(scene);
-    renderer.setAnimationLoop(() => animate(scene, camera, renderer, rendererType, stats0, stats1, stats2));
+    renderer.setAnimationLoop(() => animate(scene, camera, renderer, rendererType, stats0, statsGL ));
 
     setTimeout(() => {
         console.info('benchmark stopped');
@@ -96,5 +98,5 @@ export function loadGeometryBenchmark(rendererType, stats0, stats1, stats2) {
         renderer.dispose();
         renderer = null;
         document.body.removeChild(canvas);
-    }, 30000);
+    }, 10000);
 }

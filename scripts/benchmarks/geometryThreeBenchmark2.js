@@ -4,7 +4,8 @@ import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 function initGeometries() {
   const geometries = [
-    new THREE.SphereGeometry(1, 32, 16), //similar amount of vertices and faces
+    //geometries with similar amount of vertices and tris - verts:482, Tris: ~~960
+    new THREE.SphereGeometry(1, 32, 16),
     new THREE.ConeGeometry(1, 2, 32, 16),
   ];
   return geometries;
@@ -15,12 +16,12 @@ function createMaterial() {
   return material;
 }
 
-function initMeshes(scene, geometry, numObjects) {
+function initMeshes(scene, geometries, numObjects) {
   const material = createMaterial();
-  const mesh = new THREE.Mesh(geometry, material);
+  const mesh = new THREE.Mesh(geometries[1], material);
 
   for (let i = 0; i < numObjects; i++) {
-    const newMesh = mesh.clone(); // Clone the base mesh for each object
+    const newMesh = mesh.clone();
     newMesh.position.x = Math.random() * 200 - 105;
     newMesh.position.y = Math.random() * 110 - 55;
     newMesh.position.z = Math.random() * 100 - 80;
@@ -33,74 +34,83 @@ function randomizeRotationSpeed() {
 }
 
 function setupScene() {
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#0d0c18");
-    return scene;
+  let scene = new THREE.Scene();
+  scene.background = new THREE.Color("#0d0c18");
+  return scene;
 }
 
 function setupCamera() {
-    const camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 1000);
-    camera.position.set(1, 1, 100);
-    camera.lookAt(0, 0, 0);
-    return camera;
+  let camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 1000);
+  camera.position.set(1, 1, 100);
+  camera.lookAt(0, 0, 0);
+  return camera;
 }
 
-function setupRenderer(myCanvas, selectWebGL) {
-    const renderer = new WebGPURenderer( { canvas: myCanvas, antialias: true, forceWebGL: selectWebGL } );
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( 1440, 810 );
-    document.body.appendChild(renderer.domElement);
-    return renderer;
-}
+function setupRenderer(myCanvas, rendererType) {
+  console.info(rendererType ,'selected');
 
-function animate(scene, camera, renderer, rendererType, stats0) {
-  function render() {
-    requestAnimationFrame(render);
-
-    //renderer.clearAsync();
-
-    // Update object rotations (assuming you want this)
-    scene.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        const rotationSpeed = randomizeRotationSpeed();
-        object.rotation.x += rotationSpeed.x;
-        object.rotation.y += rotationSpeed.y;
-        object.rotation.z += rotationSpeed.z;
-      }
-    });
-
-    renderer.renderAsync(scene, camera);
-
-    stats0.update();
-    //stats1.update();
-    //stats2.update();
+  let selectWebGL = false;
+  if (rendererType === 'webgl') {
+    selectWebGL = true;
   }
 
-  render();
+  let renderer = null;
+  renderer = new WebGPURenderer( { canvas: myCanvas, antialias: true, forceWebGL: selectWebGL } );
+  renderer.setPixelRatio( window.devicePixelRatio );
+  renderer.setSize( 1440, 810 );
+  return renderer;
 }
 
-export function loadGeometryBenchmark2(rendererType, stats0) {
+async function animate(scene, camera, renderer, stats0, stats) {
+  //renderer.clearAsync();
+
+  // Update object rotations
+  scene.traverse((object) => {
+    if (object instanceof THREE.Mesh) {
+      const rotationSpeed = randomizeRotationSpeed();
+      object.rotation.x += rotationSpeed.x;
+      object.rotation.y += rotationSpeed.y;
+      object.rotation.z += rotationSpeed.z;
+    }
+  });
+
+  await renderer.renderAsync(scene, camera);
+
+  stats0.update();
+  stats.update();
+}
+
+export function loadGeometryBenchmark2(rendererType, stats0, statsGL ) {
+  // canvas
   let canvas = document.createElement('canvas');
   canvas.width = 1440;
   canvas.height = 810;
   canvas.id = "mycanvas";
   document.body.appendChild(canvas);
 
-  const scene = setupScene();
-  const camera = setupCamera();
-  let renderer = null;
-
-  if (rendererType === 'webgl') {
-    console.info('WebGL selected');
-    renderer = setupRenderer(canvas, true);
-  } else {
-    console.info('WebGPU selected');
-    renderer = setupRenderer(canvas, false);
-  }
+  // benchmark
+  let scene = setupScene();
+  let camera = setupCamera();
+  let renderer = setupRenderer( canvas, rendererType );
 
   const geometries = initGeometries();
-  const numObjects = 50; // Number of objects to create
-  initMeshes(scene, geometries, numObjects);
+  const numObjects = 12; // Number of objects to create
+  initMeshes( scene, geometries, numObjects );
 
-  animate(scene, camera, renderer, rendererType, stats0);
+  // stats
+  statsGL.init( renderer );
+
+  // animate
+  renderer.setAnimationLoop(() => animate( scene, camera, renderer, stats0, statsGL ));
+
+  // cleanup
+  setTimeout(() => {
+    console.info('benchmark stopped');
+    renderer.setAnimationLoop( null) ; 
+    scene = null;
+    camera = null;
+    renderer.dispose();
+    renderer = null;
+    document.body.removeChild( canvas );
+}, 10000);
 }

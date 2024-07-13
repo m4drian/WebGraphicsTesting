@@ -17,13 +17,14 @@ async function createEngine(canvas, rendererType) {
   }
 }
 
-export function loadBabylonBenchmark(rendererType) {
+export function loadBabylonBenchmark(rendererType, stats, statsGL) {
   console.log(BABYLON)
 
   let canvas = document.createElement('canvas');
   canvas.width = 1440;
   canvas.height = 810;
   canvas.id = "mycanvas";
+
   document.body.appendChild(canvas);
 
   // Load the 3D engine
@@ -55,20 +56,26 @@ export function loadBabylonBenchmark(rendererType) {
         var normalMaterial = new BabylonMaterials.NormalMaterial("normalMat", scene);
         box.material = normalMaterial;
         box.material.disableLighting = true; //unlit material
-      
+
         engine.runRenderLoop(() => {
           scene.render();
+          stats.update();
+          statsGL.update();
         })
 
         setTimeout(() => {
+          console.info('benchmark stopped');
           engine.stopRenderLoop();
           scene.dispose();
           scene = null;
           engine.dispose();
           engine = null;
           document.body.removeChild(canvas);
-        }, 6000);
+        }, 10000);
       
+        // stats
+        statsGL.init( canvas );
+
         return scene;
       }
     })

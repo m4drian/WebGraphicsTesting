@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 
-export function loadPlayCanvasBenchmark(selectedApi) {
+export function loadPlayCanvasBenchmark(selectedApi, stats, statsGL) {
   console.info('Selected API: ', selectedApi);
   let canvas = document.createElement('canvas');
   canvas.width = 1440;
@@ -37,13 +37,20 @@ export function loadPlayCanvasBenchmark(selectedApi) {
   light.setEulerAngles(45, 0, 0);
 
   // Rotate Box on Update
-  app.on('update', dt => box.rotate(10 * dt, 20 * dt, 30 * dt));
+  app.on('update', dt => { 
+    box.rotate(10 * dt, 20 * dt, 30 * dt) 
+    stats.update();
+    statsGL.update();
+  });
 
   app.start();
+
+  // stats
+  statsGL.init( canvas );
 
   setTimeout(() => {
     console.info('benchmark stopped');
     app.destroy();
     document.body.removeChild(canvas);
-}, 6000);
+}, 10000);
 }
