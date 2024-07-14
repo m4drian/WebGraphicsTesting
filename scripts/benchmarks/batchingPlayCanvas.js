@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 
-export async function loadPlayCanvasBenchmark(selectedApi, statsGL) {
+export async function loadPlayCanvasBenchmark(selectedApi, statsGL, benchmarkData) {
     console.info('Selected API: ', selectedApi);
     let canvas = document.createElement('canvas');
     canvas.width = 1440;
@@ -122,6 +122,7 @@ export async function loadPlayCanvasBenchmark(selectedApi, statsGL) {
 
     // Set an update function on the app's update event
     let time = 0;
+    let timePerf = (performance || Date).now();
     app.on('update', function (/** @type {number} */ dt) {
         time += dt;
 
@@ -140,6 +141,14 @@ export async function loadPlayCanvasBenchmark(selectedApi, statsGL) {
         // orbit camera around
         camera.setLocalPosition(70 * Math.sin(time), 0, 70 * Math.cos(time));
         camera.lookAt(pc.Vec3.ZERO);
+
+        // gathering performance metrics
+        timePerf = (performance || Date).now();
+        if (timePerf >= statsGL.prevTime + 1000) {
+          const fps = (statsGL.frames * 1000) / (timePerf - statsGL.prevTime);
+          benchmarkData.push(fps);
+        }
+        statsGL.update();
     });
 
     app.start();
@@ -149,7 +158,20 @@ export async function loadPlayCanvasBenchmark(selectedApi, statsGL) {
 
     setTimeout(() => {
         console.info('benchmark stopped');
+        let cpuLogs = statsGL.averageCpu.logs;
         app.destroy();
         document.body.removeChild(canvas);
+
+        // printing performance metrics
+        let csvContent = 'cpu,\n';
+        cpuLogs.forEach(dataPoint => 
+          {csvContent += dataPoint + ',\n'
+        });
+        csvContent += 'fps,\n';
+        benchmarkData.forEach(dataPoint => 
+          {csvContent += dataPoint + ',\n'
+        });
+        const dataElement = document.getElementById('benchmarkData');
+        dataElement.value = csvContent;
     }, 10000);
 }

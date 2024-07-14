@@ -34,11 +34,11 @@ confirmButton.addEventListener('click', () => {
     } else if (selectedBenchmark === 'geometry2') {
         loadGeometryBenchmark2(selectedApi, statsGL, benchmarkData);
     } else if (selectedBenchmark === 'babylon1') {
-        loadPlayCanvasBenchmark(selectedApi, statsGL);
+        loadPlayCanvasBenchmark(selectedApi, statsGL, benchmarkData);
     } else if (selectedBenchmark === 'babylon2') {
         loadBabylonBenchmark(selectedApi, statsGL, benchmarkData);
     } else if (selectedBenchmark === 'play-canvas') {
-        loadPlayCanvasBenchmark(selectedApi, statsGL);
+        loadPlayCanvasBenchmark(selectedApi, statsGL, benchmarkData);
     } else {
         console.warn('Nothing selected');
     }
