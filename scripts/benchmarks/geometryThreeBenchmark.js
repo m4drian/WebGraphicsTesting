@@ -33,10 +33,10 @@ function createGeometry(scene) {
     const geometry = new THREE.ConeGeometry(1, 2, 32, 16)
     //const geometry = new THREE.SphereGeometry( 1, 32, 16 ); //verts:482, Edges: 992, Faces: 512, Tris: 960
     const numOfObjects = 5000;
-    //const material = new THREE.MeshBasicMaterial({color: getMonochromaticColor(getRandomBaseColor(), 50)})
     const material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
 
     for (let i = 0; i < numOfObjects; i++) {
+        //const material = new THREE.MeshBasicMaterial({color: getMonochromaticColor(getRandomBaseColor(), 50)})
         const cubeMesh = new THREE.Mesh(geometry, material);
         cubeMesh.position.x = Math.random() * 200 - 105;
         cubeMesh.position.y = Math.random() * 110 - 55;
