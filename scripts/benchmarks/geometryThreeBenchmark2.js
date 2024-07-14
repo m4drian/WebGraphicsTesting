@@ -61,7 +61,7 @@ function setupRenderer(myCanvas, rendererType) {
   return renderer;
 }
 
-async function animate(scene, camera, renderer, stats) {
+async function animate(scene, camera, renderer, statsGL, time, benchmarkData) {
   //renderer.clearAsync();
 
   // Update object rotations
@@ -76,10 +76,16 @@ async function animate(scene, camera, renderer, stats) {
 
   await renderer.renderAsync(scene, camera);
 
-  stats.update();
+  // gathering performance metrics
+  time = (performance || Date).now();
+  if (time >= statsGL.prevTime + 1000) {
+    const fps = (statsGL.frames * 1000) / (time - statsGL.prevTime);
+    benchmarkData.push(fps);
+  }
+  statsGL.update();
 }
 
-export function loadGeometryBenchmark2(rendererType, statsGL) {
+export function loadGeometryBenchmark2(rendererType, statsGL, benchmarkData) {
   // canvas
   let canvas = document.createElement('canvas');
   canvas.width = 1440;
@@ -100,16 +106,30 @@ export function loadGeometryBenchmark2(rendererType, statsGL) {
   statsGL.init( renderer );
 
   // animate
-  renderer.setAnimationLoop(() => animate( scene, camera, renderer, statsGL ));
+  let time = (performance || Date).now();
+  renderer.setAnimationLoop(() => animate( scene, camera, renderer, statsGL, time, benchmarkData ));
 
   // cleanup
   setTimeout(() => {
     console.info('benchmark stopped');
+    let cpuLogs = statsGL.averageCpu.logs;
     renderer.setAnimationLoop( null) ; 
     scene = null;
     camera = null;
     renderer.dispose();
     renderer = null;
     document.body.removeChild( canvas );
+
+    // printing performance metrics
+    let csvContent = 'cpu,\n';
+    cpuLogs.forEach(dataPoint => 
+      {csvContent += dataPoint + ',\n'
+    });
+    csvContent += 'fps,\n';
+    benchmarkData.forEach(dataPoint => 
+      {csvContent += dataPoint + ',\n'
+    });
+    const dataElement = document.getElementById('benchmarkData');
+    dataElement.value = csvContent;
 }, 10000);
 }

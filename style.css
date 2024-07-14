@@ -8,3 +8,12 @@ h1 {
     color: white;
     background-color: transparent;
 }
+
+#benchmarkData {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    width: 100%;
+    color: white;
+    background: rgba(101, 101, 101, 0.5);
+  }
