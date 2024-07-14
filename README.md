@@ -3,7 +3,9 @@
 # Used Libraries
 
 - three
-- webgl-context
+- babylon
+- stats-gl
+
 - jsdoc
 - vite
 - eslint

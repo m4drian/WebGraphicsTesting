@@ -1,7 +1,7 @@
-import { loadGeometryBenchmark } from './benchmarks/geometryThreeBenchmark';
-import { loadGeometryBenchmark2 } from './benchmarks/geometryThreeBenchmark2';
-import { loadPlayCanvasBenchmark } from './benchmarks/playCanvasBenchmark';
-import { loadBabylonBenchmark } from './benchmarks/babylonBenchmark';
+import { loadGeometryBenchmark } from './benchmarks/normalsThree';
+import { loadGeometryBenchmark2 } from './benchmarks/batchedNormalsThree';
+import { loadPlayCanvasBenchmark } from './benchmarks/batchingPlayCanvas';
+import { loadBabylonBenchmark } from './benchmarks/normalsBabylon';
 import GlStats from 'stats-gl';
 
 const apiSelector = document.getElementById('api-selector');
