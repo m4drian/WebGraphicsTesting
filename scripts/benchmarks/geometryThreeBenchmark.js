@@ -20,9 +20,9 @@ function setupRenderer(myCanvas, rendererType) {
     console.info(rendererType, 'selected');
 
     if (rendererType === 'webgl') {
-        renderer = new THREE.WebGLRenderer( { canvas: myCanvas, antialias: true } );
+        renderer = new THREE.WebGLRenderer( { canvas: myCanvas, antialias: false, forceWebGL: true, stencil: false, depth: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: false, powerPreference: "high-performance" } );
     } else {
-        renderer = new WebGPURenderer( { canvas: myCanvas, antialias: true } );
+        renderer = new WebGPURenderer( { canvas: myCanvas, antialias: false, forceWebGL: false, stencil: false, depth: false, alpha: true, powerPreference: "high-performance" } );
     }
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( 1440, 810 );
@@ -47,12 +47,12 @@ function createGeometry(scene) {
 
 async function animate(scene, camera, renderer, rendererType, statsGL ) {
 
-    if (rendererType === 'webgl')
+    /*if (rendererType === 'webgl')
     {
         renderer.clear();
     } else {
         renderer.clearAsync();
-    }
+    }*/
 
     // Rotate
     scene.traverse((object) => {
@@ -62,12 +62,12 @@ async function animate(scene, camera, renderer, rendererType, statsGL ) {
         }
     });
 
-    if (rendererType === 'webgl')
-    {
+    //if (rendererType === 'webgl')
+    //{
         renderer.render(scene, camera);
-    } else {
-        await renderer.renderAsync(scene, camera);
-    }
+    //} else {
+    //    await renderer.renderAsync(scene, camera);
+    //}
 
     statsGL.update();
 }
@@ -87,7 +87,7 @@ export function loadGeometryBenchmark(rendererType, statsGL ) {
     statsGL.init( renderer );
 
     createGeometry(scene);
-    renderer.setAnimationLoop(() => animate(scene, camera, renderer, rendererType, statsGL ));
+    renderer.setAnimationLoop(() => animate( scene, camera, renderer, rendererType, statsGL ));
 
     setTimeout(() => {
         console.info('benchmark stopped');

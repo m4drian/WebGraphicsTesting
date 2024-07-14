@@ -4,11 +4,11 @@ import * as BabylonMaterials from '@babylonjs/materials';
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {
     console.info('WebGL selected');
-    const engine = new BABYLON.Engine(canvas, true);
+    const engine = new BABYLON.Engine(canvas, false, {antialias: false, stencil: false, depth: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: false});
     return engine
   } else if (rendererType === 'webgpu') {
     console.info('WebGPU selected');
-    const engine = new BABYLON.WebGPUEngine(canvas);
+    const engine = new BABYLON.WebGPUEngine(canvas, {antialias: false, stencil: false, depth: false, alpha: true, premultipliedAlpha: true});
     await engine.initAsync();
     return engine;
   } else {

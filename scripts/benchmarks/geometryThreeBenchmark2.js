@@ -55,7 +55,7 @@ function setupRenderer(myCanvas, rendererType) {
   }
 
   let renderer = null;
-  renderer = new WebGPURenderer( { canvas: myCanvas, antialias: true, forceWebGL: selectWebGL } );
+  renderer = new WebGPURenderer( { canvas: myCanvas, antialias: false, forceWebGL: selectWebGL, stencil: false, depth: false, alpha: true, powerPreference: "high-performance" } );
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( 1440, 810 );
   return renderer;
@@ -99,7 +99,7 @@ export function loadGeometryBenchmark2(rendererType, statsGL, benchmarkData) {
   let renderer = setupRenderer( canvas, rendererType );
 
   const geometries = initGeometries();
-  const numObjects = 12; // Number of objects to create
+  const numObjects = 800; // Number of objects to create
   initMeshes( scene, geometries, numObjects );
 
   // stats
