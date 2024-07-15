@@ -2,6 +2,7 @@ import { loadGeometryBenchmark } from './benchmarks/normalsThree';
 import { loadGeometryBenchmark2 } from './benchmarks/batchedNormalsThree';
 import { loadPlayCanvasBenchmark } from './benchmarks/batchingPlayCanvas';
 import { loadBabylonBenchmark } from './benchmarks/normalsBabylon';
+import { lightsBabylon } from './benchmarks/lightsBabylon';
 import GlStats from 'stats-gl';
 
 const apiSelector = document.getElementById('api-selector');
@@ -30,13 +31,13 @@ confirmButton.addEventListener('click', () => {
 
     // Load the specific benchmark based on selection
     if (selectedBenchmark === 'geometry1') {
-        loadGeometryBenchmark(selectedApi, statsGL);
+        loadGeometryBenchmark(selectedApi, statsGL, benchmarkData);
     } else if (selectedBenchmark === 'geometry2') {
         loadGeometryBenchmark2(selectedApi, statsGL, benchmarkData);
     } else if (selectedBenchmark === 'babylon1') {
-        loadPlayCanvasBenchmark(selectedApi, statsGL, benchmarkData);
-    } else if (selectedBenchmark === 'babylon2') {
         loadBabylonBenchmark(selectedApi, statsGL, benchmarkData);
+    } else if (selectedBenchmark === 'babylon2') {
+        lightsBabylon(selectedApi, statsGL, benchmarkData);
     } else if (selectedBenchmark === 'play-canvas') {
         loadPlayCanvasBenchmark(selectedApi, statsGL, benchmarkData);
     } else {

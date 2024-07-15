@@ -57,7 +57,15 @@ function setupRenderer(myCanvas, rendererType) {
   let renderer = null;
   // in this example WebGPU automatically sets alpha setting to "premultiplied" if true and "opaque" if false
   // WebGL has premultipliedAlpha set to true by default
-  renderer = new WebGPURenderer( { canvas: myCanvas, antialias: false, forceWebGL: selectWebGL, stencil: false, depth: false, alpha: true, powerPreference: "high-performance" } );
+  renderer = new WebGPURenderer( { 
+    canvas: myCanvas, 
+    antialias: false, 
+    forceWebGL: selectWebGL, 
+    stencil: false, 
+    depth: false, 
+    alpha: true, 
+    powerPreference: "high-performance" 
+  } );
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( 1440, 810 );
   return renderer;

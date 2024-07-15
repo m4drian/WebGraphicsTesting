@@ -1,4 +1,4 @@
-import * as THREE from './threeImports.js';
+import * as THREE from 'three';
 
 /**
  * Generates a random base color from the provided color array (Hard Coded Color Scheme).

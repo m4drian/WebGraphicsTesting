@@ -20,9 +20,26 @@ function setupRenderer(myCanvas, rendererType) {
     console.info(rendererType, 'selected');
 
     if (rendererType === 'webgl') {
-        renderer = new THREE.WebGLRenderer( { canvas: myCanvas, antialias: false, forceWebGL: true, stencil: false, depth: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: false, powerPreference: "high-performance" } );
+        renderer = new THREE.WebGLRenderer( { 
+            canvas: myCanvas, 
+            antialias: false, 
+            forceWebGL: true, 
+            stencil: false, 
+            depth: false, 
+            alpha: true, 
+            premultipliedAlpha: true, 
+            preserveDrawingBuffer: false, 
+            powerPreference: "high-performance" } );
     } else {
-        renderer = new WebGPURenderer( { canvas: myCanvas, antialias: false, forceWebGL: false, stencil: false, depth: false, alpha: true, powerPreference: "high-performance" } );
+        renderer = new WebGPURenderer( { 
+            canvas: myCanvas, 
+            antialias: false, 
+            forceWebGL: false, 
+            stencil: false, 
+            depth: false, 
+            alpha: true, 
+            powerPreference: "high-performance" 
+        } );
     }
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( 1440, 810 );

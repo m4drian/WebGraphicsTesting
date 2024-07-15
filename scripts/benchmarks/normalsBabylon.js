@@ -4,17 +4,41 @@ import * as BabylonMaterials from '@babylonjs/materials';
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {
     console.info('WebGL selected');
-    const engine = new BABYLON.Engine(canvas, false, {antialias: false, stencil: false, depth: false, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: false});
+    const engine = new BABYLON.Engine(canvas, false, {
+      antialias: false, 
+      stencil: false, 
+      depth: true, 
+      alpha: true, 
+      premultipliedAlpha: true, 
+      preserveDrawingBuffer: true, 
+      powerPreference: "high-performance"
+    });
     return engine
   } else if (rendererType === 'webgpu') {
     console.info('WebGPU selected');
-    const engine = new BABYLON.WebGPUEngine(canvas, {antialias: false, stencil: false, depth: false, alpha: true, premultipliedAlpha: true});
+    const engine = new BABYLON.WebGPUEngine(canvas, {
+      antialias: false, 
+      stencil: false, 
+      depth: false, 
+      alpha: true, 
+      premultipliedAlpha: true, 
+      powerPreference: "high-performance"
+    });
     await engine.initAsync();
     return engine;
   } else {
     console.warn('Unsupported renderer type:', rendererType);
     return null;
   }
+}
+
+function setupBoxes(scene, position, material){
+  const box = BABYLON.MeshBuilder.CreateBox("box", { size: 0.04 }, scene);
+  box.position = position;
+  box.receiveShadows = true;
+  box.material = material;
+  box.alwaysSelectAsActiveMesh = true; //intentionally drawing all meshes
+  return box;
 }
 
 export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
@@ -33,17 +57,17 @@ export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
       if (engine) {
         let scene = new BABYLON.Scene(engine);
 
-        const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
+        const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 3, -8), scene);
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.detachControl();
         //camera.attachControl(canvas, true);
       
-        const box = BABYLON.MeshBuilder.CreateBox("box", { size: 2 }, scene);
+        const box = BABYLON.MeshBuilder.CreateBox("box", { size: 1.5 }, scene);
       
         // Rotate the box on every frame update
         scene.registerBeforeRender(() => {
-          box.rotation.x += 0.0004;
-          box.rotation.y += 0.0008;
+          box.rotation.x += 0.016;
+          box.rotation.y += 0.008;
         });
       
         //const light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
@@ -56,6 +80,26 @@ export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
         var normalMaterial = new BabylonMaterials.NormalMaterial("normalMat", scene);
         box.material = normalMaterial;
         box.material.disableLighting = true; //unlit material
+
+        //setup boxes with normal material
+        let boxes = [];
+        const numBoxes = 10000;
+        const boxRadius = 2.9;
+        for (let i = 0; i < numBoxes; i++) {
+          const angle = i * (Math.PI * 2) / numBoxes;
+          const position = new BABYLON.Vector3(Math.cos(angle) * boxRadius, Math.random() * 1.5 - 0.75, Math.sin(angle) * boxRadius);
+
+          const boxData = setupBoxes(scene, position, normalMaterial);
+          boxes.push(boxData);
+        }
+
+        //Rotate boxes
+        scene.registerBeforeRender(() => {
+          for (let i = 0; i < boxes.length; i++) {
+            boxes[i].rotation.x += 0.0006;
+            boxes[i].rotation.y += 0.0012;
+          }
+        });
 
         let time = (performance || Date).now();
         engine.runRenderLoop(() => {
