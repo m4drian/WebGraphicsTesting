@@ -5,7 +5,7 @@ import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 const NUM_OBJECTS = 1200;
 const NUM_LIGHTS = 14;
 let T_DELAY;
-let T_TIME = 10000;
+let T_TIME = 12000;
 
 let fps = 0.0;
 

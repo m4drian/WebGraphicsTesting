@@ -3,7 +3,7 @@ import * as BABYLON from '@babylonjs/core';
 
 const NUM_BOXES = 700;
 const NUM_LIGHTS = 6; //shouldnt exceed 6 for this example
-let T_TIME = 10000;
+let T_TIME = 12000;
 
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {
@@ -27,6 +27,8 @@ async function createEngine(canvas, rendererType) {
       premultipliedAlpha: true, 
       powerPreference: "high-performance"
     });
+    // optimizations
+    engine.compatibilityMode = false;
     await engine.initAsync();
     return engine;
   } else {
@@ -43,12 +45,14 @@ function setupLight(scene, position, color, material){
   light.shadowEnabled = true;
   light.shadowMinZ = 0;
   light.shadowMaxZ = 15;
+  light.alwaysSelectAsActiveMesh = true;
   let shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
 
   const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 0.25}, scene);
   sphere.material = material
   sphere.position = light.position;
   sphere.material.disableLighting = true;
+  sphere.alwaysSelectAsActiveMesh = true;
   //return [light, sphere];
   return { light, sphere, shadowGenerator };
 }
@@ -188,6 +192,9 @@ export function lightsBabylon(rendererType, statsGL, benchmarkData) {
 
         // render loop
         scene.executeWhenReady(() => {
+          //optimization
+          engine.snapshotRendering = true;
+
           console.info('benchmark started');
           let time = (performance || Date).now();
           engine.runRenderLoop(() => {
