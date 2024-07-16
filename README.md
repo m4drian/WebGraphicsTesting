@@ -1,12 +1,10 @@
 
 
-# Used Libraries
+# Main Libraries Used
 
 - three
 - babylon
 - stats-gl
 
-- jsdoc
-- vite
-- eslint
-- prettier
+Used this public domain texture for the project:
+https://publicdomaintextures.com/elementor-112/hedge-03/
