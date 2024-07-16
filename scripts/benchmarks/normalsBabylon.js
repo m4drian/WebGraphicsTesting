@@ -2,6 +2,7 @@ import * as BABYLON from '@babylonjs/core';
 import * as BabylonMaterials from '@babylonjs/materials';
 
 const NUM_BOXES = 10000;
+let T_TIME = 10000;
 
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {
@@ -140,7 +141,7 @@ export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
             });
             const dataElement = document.getElementById('benchmarkData');
             dataElement.value = csvContent;
-          }, 10000);
+          }, T_TIME);
         
           // stats
           statsGL.init( canvas );

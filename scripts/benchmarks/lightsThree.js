@@ -4,6 +4,8 @@ import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 const NUM_OBJECTS = 1200;
 const NUM_LIGHTS = 14;
+let T_DELAY;
+let T_TIME = 10000;
 
 let fps = 0.0;
 
@@ -206,10 +208,10 @@ export function lightsThree(rendererType, statsGL, benchmarkData) {
 
   //lazy delay implementation so everything loads properly (mostly for WebGL)
   let shouldRender = false;
-  let delay = 9000;
+  let delay = T_DELAY/3;
   if (rendererType == 'webgl')
   {
-    delay = 20000;
+    delay = T_DELAY;
   }
 
   setTimeout(() => {
@@ -242,7 +244,7 @@ export function lightsThree(rendererType, statsGL, benchmarkData) {
       });
       const dataElement = document.getElementById('benchmarkData');
       dataElement.value = csvContent;
-    }, 10000);
+    }, T_TIME);
   }, delay);
 
   // animate

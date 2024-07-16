@@ -4,6 +4,8 @@ import { MeshNormalNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 let NUM_OBJECTS = 4000;
+let T_DELAY = 10000;
+let T_TIME = 10000;
 
 function initGeometries() {
   const geometries = [
@@ -156,6 +158,11 @@ export function loadNormalsThree(rendererType, statsGL, benchmarkData) {
 
   //lazy delay implementation so everything loads properly (important for WebGL)
   let shouldRender = false;
+  let delay = T_DELAY/3;
+  if (rendererType == 'webgl')
+  {
+    delay = T_DELAY;
+  }
 
   setTimeout(() => {
     console.info('benchmark started');
@@ -186,8 +193,8 @@ export function loadNormalsThree(rendererType, statsGL, benchmarkData) {
       });
       const dataElement = document.getElementById('benchmarkData');
       dataElement.value = csvContent;
-    }, 10000);
-  }, 11000);
+    }, T_TIME);
+  }, delay);
 
   // animate
   renderer.renderAsync(scene, camera); // loading first frame before benchmark starts

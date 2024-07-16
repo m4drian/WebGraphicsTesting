@@ -3,6 +3,7 @@ import * as BABYLON from '@babylonjs/core';
 
 const NUM_BOXES = 700;
 const NUM_LIGHTS = 6; //shouldnt exceed 6 for this example
+let T_TIME = 10000;
 
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {
@@ -223,7 +224,7 @@ export function lightsBabylon(rendererType, statsGL, benchmarkData) {
             });
             const dataElement = document.getElementById('benchmarkData');
             dataElement.value = csvContent;
-          }, 10000);
+          }, T_TIME);
           
           // stats
           statsGL.init( canvas );
