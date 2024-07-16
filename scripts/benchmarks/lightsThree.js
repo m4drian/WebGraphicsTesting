@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
-const NUM_OBJECTS = 1200;
+const NUM_OBJECTS = 20;
 const NUM_LIGHTS = 14;
-let T_DELAY;
+let T_DELAY = 12000;
 let T_TIME = 12000;
 
 let fps = 0.0;
@@ -48,13 +48,24 @@ function initGeometries() {
 }
 
 function createMaterial(texDiffuse, texNormal, color) {
-  const material = new MeshPhongNodeMaterial({
-    color: color || 0x777777,
-    shininess: 0.05,
-    specular: 0x222222,
-    map: texDiffuse,
-    normalMap: texNormal
-  } );
+  let material = null;
+  if(texDiffuse && texNormal)
+  {
+    material = new MeshPhongNodeMaterial({
+      color: color || 0x777777,
+      shininess: 0.05,
+      specular: 0x222222,
+      map: texDiffuse,
+      normalMap: texNormal
+    } );
+  }
+  else {
+    material = new MeshPhongNodeMaterial({
+      color: color || 0x777777,
+      shininess: 0.05,
+      specular: 0x222222
+    } );
+  }
   material.castShadow = true;
   return material;
 }
@@ -67,6 +78,7 @@ function initMeshes(scene, geometries, numObjects, texDiffuse, texNormal) {
   let parentObject = new THREE.Object3D();
   scene.add(parentObject);
 
+  // regular mesh creation
   const boxRadius = 4;
   for (let i = 0; i < numObjects; i++) {
     const angle = i * (Math.PI * 2) / numObjects;
@@ -83,6 +95,41 @@ function initMeshes(scene, geometries, numObjects, texDiffuse, texNormal) {
     scene.add(newMesh);
   }
 
+  // batching meshes
+  /*const geometryCount = numObjects;
+  const vertexCount = geometries.length * 512;
+  const indexCount = geometries.length * 1024;
+
+  const batchedMesh = new THREE.BatchedMesh(geometryCount, vertexCount, indexCount, material);
+  console.info(batchedMesh);
+  console.info(batchedMesh.constructor.name);
+
+  const geometryIds = [];
+  for (let i = 0; i < geometries.length; i++) {
+    geometryIds.push(batchedMesh.addGeometry(geometries[i]));
+  }
+
+  const boxRadius = 4;
+  for (let i = 0; i < numObjects; i++) {
+    const geometryId = geometryIds[i % geometries.length];
+    const instanceId = batchedMesh.addInstance(geometryId);
+
+    // Set the instance's position using a matrix
+    const angle = i * (Math.PI * 2) / numObjects;
+    const position = new THREE.Vector3(
+      Math.cos(angle) * boxRadius,
+      Math.random() * 2.5 + 0.5,
+      Math.sin(angle) * boxRadius);
+    const matrix = new THREE.Matrix4();
+    matrix.makeTranslation(position.x, position.y, position.z);
+    batchedMesh.setMatrixAt(instanceId, matrix);
+  }
+  batchedMesh.frustumCulled = false;
+  batchedMesh.castShadow = true;
+  parentObject.add(batchedMesh);
+
+  scene.add(batchedMesh);*/
+
   // plane
   const plane = new THREE.Mesh(new THREE.PlaneGeometry(90,90), material2);
   plane.rotation.x = -Math.PI / 2;
@@ -90,6 +137,7 @@ function initMeshes(scene, geometries, numObjects, texDiffuse, texNormal) {
   plane.userData.id = 1;
   plane.receiveShadow = true;
   plane.castShadow = true;
+  plane.frustumCulled = false;
 
   scene.add(plane);
 }

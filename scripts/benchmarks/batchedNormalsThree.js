@@ -48,7 +48,8 @@ function initMeshes(scene, geometries, numObjects) {
 
     // Set the instance's position using a matrix
     const angle = i * (Math.PI * 2) / numObjects;
-    const position = new THREE.Vector3(Math.cos(angle) * boxRadius,Math.random() * 5.5 + 3,Math.sin(angle) * boxRadius);//Math.random() * 200 - 105, Math.random() * 110 - 55, Math.random() * 100 - 80);
+    const position = new THREE.Vector3(Math.cos(angle) * boxRadius,Math.random() * 5.5 + 3,Math.sin(angle) * boxRadius);
+    //Math.random() * 200 - 105, Math.random() * 110 - 55, Math.random() * 100 - 80);
     const matrix = new THREE.Matrix4();
     matrix.makeTranslation(position.x, position.y, position.z);
     batchedMesh.setMatrixAt(instanceId, matrix);
