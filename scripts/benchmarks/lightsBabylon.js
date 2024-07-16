@@ -1,6 +1,9 @@
 import * as BABYLON from '@babylonjs/core';
 //import * as BabylonMaterials from '@babylonjs/materials';
 
+const NUM_BOXES = 700;
+const NUM_LIGHTS = 6; //shouldnt exceed 6 for this example
+
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {
     console.info('WebGL selected');
@@ -108,7 +111,7 @@ export function lightsBabylon(rendererType, statsGL, benchmarkData) {
         materials[3].emissiveColor = lightColors[3];
         
         // lights
-        const numLights = 6; //shouldnt exceed 6 for this example
+        const numLights = NUM_LIGHTS;
         const lights = [];
         const lightRadius = 4;
 
@@ -135,7 +138,7 @@ export function lightsBabylon(rendererType, statsGL, benchmarkData) {
         material1.maxSimultaneousLights = numLights;
 
         let boxes = [];
-        const numBoxes = 700;
+        const numBoxes = NUM_BOXES;
         const boxRadius = 2.9;
         for (let i = 0; i < numBoxes; i++) {
           const angle = i * (Math.PI * 2) / numBoxes;

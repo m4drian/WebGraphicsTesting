@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { MeshNormalNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
+let NUM_OBJECTS = 4000;
+
 function initGeometries() {
   const geometries = [
     //geometries with similar number of triangles
@@ -149,7 +151,7 @@ export function loadNormalsThree(rendererType, statsGL, benchmarkData) {
   let renderer = setupRenderer( canvas, rendererType );
 
   const geometries = initGeometries();
-  const numObjects = 4000; // Number of objects to create
+  const numObjects = NUM_OBJECTS; // Number of objects to create
   initMeshes( scene, geometries, numObjects );
 
   //lazy delay implementation so everything loads properly (important for WebGL)
