@@ -1,6 +1,8 @@
 import * as BABYLON from '@babylonjs/core';
 import * as BabylonMaterials from '@babylonjs/materials';
 
+const NUM_BOXES = 10000;
+
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {
     console.info('WebGL selected');
@@ -83,7 +85,7 @@ export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
 
         //setup boxes with normal material
         let boxes = [];
-        const numBoxes = 10000;
+        const numBoxes = NUM_BOXES;
         const boxRadius = 2.9;
         for (let i = 0; i < numBoxes; i++) {
           const angle = i * (Math.PI * 2) / numBoxes;
