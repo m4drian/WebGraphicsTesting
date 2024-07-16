@@ -103,6 +103,12 @@ export function loadGeometryBenchmark2(rendererType, statsGL, benchmarkData) {
   canvas.id = "mycanvas";
   document.body.appendChild(canvas);
 
+  // loader
+  ///const loadingManager = new THREE.LoadingManager();
+  //const textureLoader = new THREE.TextureLoader(loadingManager);
+  //const texDiffuse = textureLoader.load('scripts/benchmarks/textures/hedge03Diffuse2k.jpg');
+  //const texNormal = textureLoader.load('scripts/benchmarks/textures/hedge03normal2k.jpg');
+
   // benchmark
   let scene = setupScene();
   let camera = setupCamera();
@@ -112,34 +118,47 @@ export function loadGeometryBenchmark2(rendererType, statsGL, benchmarkData) {
   const numObjects = 800; // Number of objects to create
   initMeshes( scene, geometries, numObjects );
 
-  // stats
-  statsGL.init( renderer );
+  //lazy delay implementation so everything loads properly (important for WebGL)
+  let shouldRender = false;
+
+  setTimeout(() => {
+    console.info('benchmark started');
+    shouldRender = true;
+
+    // stats
+    statsGL.init( renderer );
+
+    // cleanup
+    setTimeout(() => {
+      console.info('benchmark stopped');
+      let cpuLogs = statsGL.averageCpu.logs;
+      renderer.setAnimationLoop( null) ; 
+      scene = null;
+      camera = null;
+      renderer.dispose();
+      renderer = null;
+      document.body.removeChild( canvas );
+
+      // printing performance metrics
+      let csvContent = 'cpu,\n';
+      cpuLogs.forEach(dataPoint => 
+        {csvContent += dataPoint + ',\n'
+      });
+      csvContent += 'fps,\n';
+      benchmarkData.forEach(dataPoint => 
+        {csvContent += dataPoint + ',\n'
+      });
+      const dataElement = document.getElementById('benchmarkData');
+      dataElement.value = csvContent;
+    }, 10000);
+  }, 11000);
 
   // animate
+  renderer.renderAsync(scene, camera); // loading first frame before benchmark starts
   let time = (performance || Date).now();
-  renderer.setAnimationLoop(() => animate( scene, camera, renderer, statsGL, time, benchmarkData ));
-
-  // cleanup
-  setTimeout(() => {
-    console.info('benchmark stopped');
-    let cpuLogs = statsGL.averageCpu.logs;
-    renderer.setAnimationLoop( null) ; 
-    scene = null;
-    camera = null;
-    renderer.dispose();
-    renderer = null;
-    document.body.removeChild( canvas );
-
-    // printing performance metrics
-    let csvContent = 'cpu,\n';
-    cpuLogs.forEach(dataPoint => 
-      {csvContent += dataPoint + ',\n'
-    });
-    csvContent += 'fps,\n';
-    benchmarkData.forEach(dataPoint => 
-      {csvContent += dataPoint + ',\n'
-    });
-    const dataElement = document.getElementById('benchmarkData');
-    dataElement.value = csvContent;
-}, 10000);
+  renderer.setAnimationLoop(() => {
+    if (shouldRender) {
+      animate( scene, camera, renderer, statsGL, time, benchmarkData )
+    }
+  });
 }

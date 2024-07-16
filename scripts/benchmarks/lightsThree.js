@@ -115,31 +115,34 @@ export function lightsThree(rendererType, statsGL, benchmarkData) {
   // stats
   statsGL.init( renderer );
 
-  // animate
-  let time = (performance || Date).now();
-  renderer.setAnimationLoop(() => animate( scene, camera, renderer, statsGL, time, benchmarkData ));
-
-  // cleanup
+  // lazy way to delay rendering before scene loads
   setTimeout(() => {
-    console.info('benchmark stopped');
-    let cpuLogs = statsGL.averageCpu.logs;
-    renderer.setAnimationLoop( null) ; 
-    scene = null;
-    camera = null;
-    renderer.dispose();
-    renderer = null;
-    document.body.removeChild( canvas );
+    // animate
+    let time = (performance || Date).now();
+    renderer.setAnimationLoop(() => animate( scene, camera, renderer, statsGL, time, benchmarkData ));
 
-    // printing performance metrics
-    let csvContent = 'cpu,\n';
-    cpuLogs.forEach(dataPoint => 
-      {csvContent += dataPoint + ',\n'
-    });
-    csvContent += 'fps,\n';
-    benchmarkData.forEach(dataPoint => 
-      {csvContent += dataPoint + ',\n'
-    });
-    const dataElement = document.getElementById('benchmarkData');
-    dataElement.value = csvContent;
-  }, 10000);
+    // cleanup
+    setTimeout(() => {
+      console.info('benchmark stopped');
+      let cpuLogs = statsGL.averageCpu.logs;
+      renderer.setAnimationLoop( null) ; 
+      scene = null;
+      camera = null;
+      renderer.dispose();
+      renderer = null;
+      document.body.removeChild( canvas );
+
+      // printing performance metrics
+      let csvContent = 'cpu,\n';
+      cpuLogs.forEach(dataPoint => 
+        {csvContent += dataPoint + ',\n'
+      });
+      csvContent += 'fps,\n';
+      benchmarkData.forEach(dataPoint => 
+        {csvContent += dataPoint + ',\n'
+      });
+      const dataElement = document.getElementById('benchmarkData');
+      dataElement.value = csvContent;
+    }, 10000);
+  },3000);
 }

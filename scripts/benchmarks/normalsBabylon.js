@@ -101,44 +101,48 @@ export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
           }
         });
 
-        let time = (performance || Date).now();
-        engine.runRenderLoop(() => {
-          scene.render();
+        // render loop
+        scene.executeWhenReady(() => {
+          console.info('benchmark started');
+          let time = (performance || Date).now();
+          engine.runRenderLoop(() => {
+            scene.render();
 
-          // gathering performance metrics
-          time = (performance || Date).now();
-          if (time >= statsGL.prevTime + 1000) {
-            const fps = (statsGL.frames * 1000) / (time - statsGL.prevTime);
-            benchmarkData.push(fps);
-          }
-          statsGL.update();
-        })
+            // gathering performance metrics
+            time = (performance || Date).now();
+            if (time >= statsGL.prevTime + 1000) {
+              const fps = (statsGL.frames * 1000) / (time - statsGL.prevTime);
+              benchmarkData.push(fps);
+            }
+            statsGL.update();
+          })
 
-        setTimeout(() => {
-          console.info('benchmark stopped');
-          let cpuLogs = statsGL.averageCpu.logs;
-          engine.stopRenderLoop();
-          scene.dispose();
-          scene = null;
-          engine.dispose();
-          engine = null;
-          document.body.removeChild(canvas);
+          setTimeout(() => {
+            console.info('benchmark stopped');
+            let cpuLogs = statsGL.averageCpu.logs;
+            engine.stopRenderLoop();
+            scene.dispose();
+            scene = null;
+            engine.dispose();
+            engine = null;
+            document.body.removeChild(canvas);
 
-          // printing performance metrics
-          let csvContent = 'cpu,\n';
-          cpuLogs.forEach(dataPoint => 
-            {csvContent += dataPoint + ',\n'
-          });
-          csvContent += 'fps,\n';
-          benchmarkData.forEach(dataPoint => 
-            {csvContent += dataPoint + ',\n'
-          });
-          const dataElement = document.getElementById('benchmarkData');
-          dataElement.value = csvContent;
-        }, 10000);
-      
-        // stats
-        statsGL.init( canvas );
+            // printing performance metrics
+            let csvContent = 'cpu,\n';
+            cpuLogs.forEach(dataPoint => 
+              {csvContent += dataPoint + ',\n'
+            });
+            csvContent += 'fps,\n';
+            benchmarkData.forEach(dataPoint => 
+              {csvContent += dataPoint + ',\n'
+            });
+            const dataElement = document.getElementById('benchmarkData');
+            dataElement.value = csvContent;
+          }, 10000);
+        
+          // stats
+          statsGL.init( canvas );
+        });
 
         return scene;
       }

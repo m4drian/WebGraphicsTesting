@@ -185,6 +185,7 @@ export function lightsBabylon(rendererType, statsGL, benchmarkData) {
 
         // render loop
         scene.executeWhenReady(() => {
+          console.info('benchmark started');
           let time = (performance || Date).now();
           engine.runRenderLoop(() => {
             scene.render();
