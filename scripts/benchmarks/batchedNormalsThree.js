@@ -1,12 +1,14 @@
 import * as THREE from 'three';
+//import { BatchedMesh } from 'three/src/objects/BatchedMesh.js';
 import { MeshNormalNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 function initGeometries() {
   const geometries = [
-    //geometries with similar amount of vertices and tris - verts:482, Tris: ~~960
-    new THREE.SphereGeometry(1, 32, 16),
-    new THREE.ConeGeometry(1, 2, 32, 16),
+    //geometries with similar number of triangles
+    new THREE.ConeGeometry( 0.06, 0.06, 40 ), //tris: 80
+		new THREE.BoxGeometry( 0.06, 0.06, 0.06, 2, 2, 1 ), //tris: 84
+		new THREE.SphereGeometry( 0.06, 8, 6 ), //tris: 80
   ];
   return geometries;
 }
@@ -18,15 +20,59 @@ function createMaterial() {
 
 function initMeshes(scene, geometries, numObjects) {
   const material = createMaterial();
-  const mesh = new THREE.Mesh(geometries[1], material);
 
-  for (let i = 0; i < numObjects; i++) {
-    const newMesh = mesh.clone();
-    newMesh.position.x = Math.random() * 200 - 105;
-    newMesh.position.y = Math.random() * 110 - 55;
-    newMesh.position.z = Math.random() * 100 - 80;
-    scene.add(newMesh);
+  // batching meshes
+  const geometryCount = numObjects;
+  const vertexCount = geometries.length * 512;
+  const indexCount = geometries.length * 1024;
+
+  const batchedMesh = new THREE.BatchedMesh(geometryCount, vertexCount, indexCount, material);
+  console.info(batchedMesh);
+  console.info(batchedMesh.constructor.name);
+
+  const geometryIds = [];
+  for (let i = 0; i < geometries.length; i++) {
+    geometryIds.push(batchedMesh.addGeometry(geometries[i]));
   }
+
+  /*
+  const boxRadius = 2.9;
+        for (let i = 0; i < numBoxes; i++) {
+          const angle = i * (Math.PI * 2) / numBoxes;
+          const position = new BABYLON.Vector3(Math.cos(angle) * boxRadius, Math.random() * 2.5 + 0.2, Math.sin(angle) * boxRadius);
+
+          const boxData = setupBoxes(scene, position, material1);
+          boxes.push(boxData);
+        }*/
+  const boxRadius = 10;
+  for (let i = 0; i < numObjects; i++) {
+    const geometryId = geometryIds[i % geometries.length];
+    const instanceId = batchedMesh.addInstance(geometryId);
+
+    // Set the instance's position using a matrix
+    const angle = i * (Math.PI * 2) / numObjects;
+    const position = new THREE.Vector3(Math.cos(angle) * boxRadius,Math.random() * 5.5 + 3,Math.sin(angle) * boxRadius);//Math.random() * 200 - 105, Math.random() * 110 - 55, Math.random() * 100 - 80);
+    const matrix = new THREE.Matrix4();
+    matrix.makeTranslation(position.x, position.y, position.z);
+    batchedMesh.setMatrixAt(instanceId, matrix);
+
+    // old regular mesh creation
+    //const newMesh = new THREE.Mesh(geometries[i%3], material);
+    //instanceId.frustumCulled = false; // disabled for benchmark consistency
+    //instanceId.position.x = Math.random() * 200 - 105;
+    //instanceId.position.y = Math.random() * 110 - 55;
+    //instanceId.position.z = Math.random() * 100 - 80;
+    //scene.add(newMesh);
+  }
+  batchedMesh.frustumCulled = false;
+
+  //adding plane
+  //const plane = new THREE.Mesh(new THREE.PlaneGeometry(25,25), material);
+  //plane.rotation.x = -Math.PI / 2;
+  //plane.position.y = -1;
+
+  scene.add(batchedMesh);
+  //scene.add(plane);
 }
 
 function randomizeRotationSpeed() {
@@ -41,7 +87,7 @@ function setupScene() {
 
 function setupCamera() {
   let camera = new THREE.PerspectiveCamera(75, 16 / 9, 0.1, 1000);
-  camera.position.set(1, 1, 100);
+  camera.position.set(1, 12, 14);
   camera.lookAt(0, 0, 0);
   return camera;
 }
@@ -71,28 +117,29 @@ function setupRenderer(myCanvas, rendererType) {
   return renderer;
 }
 
+let fps = 0.0;
 async function animate(scene, camera, renderer, statsGL, time, benchmarkData) {
   //renderer.clearAsync();
-
-  // Update object rotations
-  scene.traverse((object) => {
-    if (object instanceof THREE.Mesh) {
-      const rotationSpeed = randomizeRotationSpeed();
-      object.rotation.x += rotationSpeed.x;
-      object.rotation.y += rotationSpeed.y;
-      object.rotation.z += rotationSpeed.z;
-    }
-  });
-
-  await renderer.renderAsync(scene, camera);
 
   // gathering performance metrics
   time = (performance || Date).now();
   if (time >= statsGL.prevTime + 1000) {
-    const fps = (statsGL.frames * 1000) / (time - statsGL.prevTime);
+    fps = (statsGL.frames * 1000) / (time - statsGL.prevTime);
     benchmarkData.push(fps);
   }
   statsGL.update();
+
+  // Update object rotations
+  scene.traverse((object) => {
+    if (object instanceof THREE.BatchedMesh) {
+      //const rotationSpeed = randomizeRotationSpeed();
+      //object.rotation.x += rotationSpeed.x;
+      object.rotation.y += fps * 0.00005;
+      //object.rotation.z += rotationSpeed.z;
+    }
+  });
+
+  await renderer.renderAsync(scene, camera);
 }
 
 export function loadGeometryBenchmark2(rendererType, statsGL, benchmarkData) {
@@ -115,7 +162,7 @@ export function loadGeometryBenchmark2(rendererType, statsGL, benchmarkData) {
   let renderer = setupRenderer( canvas, rendererType );
 
   const geometries = initGeometries();
-  const numObjects = 800; // Number of objects to create
+  const numObjects = 4000; // Number of objects to create
   initMeshes( scene, geometries, numObjects );
 
   //lazy delay implementation so everything loads properly (important for WebGL)
