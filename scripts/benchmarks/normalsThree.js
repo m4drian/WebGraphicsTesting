@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 //import { getMonochromaticColor, getRandomBaseColor } from '../colorScheme.js';
 
+//old benchmark
+
 function setupScene() {
     let scene = new THREE.Scene();
     scene.background = new THREE.Color("#0d0c18");

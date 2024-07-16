@@ -2,6 +2,11 @@ import * as THREE from 'three';
 import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
+const NUM_OBJECTS = 1200;
+const NUM_LIGHTS = 14;
+
+let fps = 0.0;
+
 function setupRenderer(myCanvas, rendererType) {
   console.info(rendererType ,'selected');
 
@@ -17,14 +22,15 @@ function setupRenderer(myCanvas, rendererType) {
     canvas: myCanvas, 
     antialias: false, 
     forceWebGL: selectWebGL, 
-    stencil: true, 
-    depth: true, 
+    stencil: false, 
+    depth: false, 
     alpha: true, 
     powerPreference: "high-performance" 
   } );
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( 1440, 810 );
-  //renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.BasicShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   return renderer;
 }
@@ -39,18 +45,21 @@ function initGeometries() {
   return geometries;
 }
 
-function createMaterial() {
+function createMaterial(texDiffuse, texNormal, color) {
   const material = new MeshPhongNodeMaterial({
-    color: 0x999999,
-    shininess: 0,
-    specular: 0x222222
+    color: color || 0x777777,
+    shininess: 0.05,
+    specular: 0x222222,
+    map: texDiffuse,
+    normalMap: texNormal
   } );
   material.castShadow = true;
   return material;
 }
 
-function initMeshes(scene, geometries, numObjects) {
-  const material = createMaterial();
+function initMeshes(scene, geometries, numObjects, texDiffuse, texNormal) {
+  const material = createMaterial(texDiffuse, texNormal);
+  const material2 = createMaterial(texDiffuse, texNormal, 0x000000);
 
   //object to make rotation easier
   let parentObject = new THREE.Object3D();
@@ -61,19 +70,21 @@ function initMeshes(scene, geometries, numObjects) {
     const angle = i * (Math.PI * 2) / numObjects;
     const newMesh = new THREE.Mesh(geometries[i%3], material);
     newMesh.frustumCulled = false; // disabled for benchmark consistency
-    newMesh.position.x = Math.cos(angle) * boxRadius;
-    newMesh.position.y = Math.random() * 2.5 + 0.5;
-    newMesh.position.z = Math.sin(angle) * boxRadius;
+    newMesh.position.set(
+      Math.cos(angle) * boxRadius,
+      Math.random() * 2.5 + 0.5,
+      Math.sin(angle) * boxRadius
+    );
     newMesh.castShadow = true;
     //newMesh.receiveShadow = true;
     parentObject.add(newMesh);
     scene.add(newMesh);
   }
 
-  //adding plane
-  const plane = new THREE.Mesh(new THREE.PlaneGeometry(25,25), material);
+  // plane
+  const plane = new THREE.Mesh(new THREE.PlaneGeometry(90,90), material2);
   plane.rotation.x = -Math.PI / 2;
-  plane.position.y = -0.5;
+  plane.position.y = -0.7;
   plane.userData.id = 1;
   plane.receiveShadow = true;
   plane.castShadow = true;
@@ -82,27 +93,31 @@ function initMeshes(scene, geometries, numObjects) {
 }
 
 function initLights(scene) {
-  const numLights = 32; //shouldnt exceed 6
+  const numLights = NUM_LIGHTS;
   const lightRadius = 7;
   const lightHeight = 6;
 
   const lightColors = [
-    new THREE.Color(0.8, 0.1, 0.1), // red
-    new THREE.Color(0.1, 0.8, 0.1), // green
-    new THREE.Color(0.1, 0.1, 0.8), // blue
-    new THREE.Color(1, 1, 1) // white
+    new THREE.Color(0.9, 0.1, 0.1), // red
+    new THREE.Color(0.1, 0.9, 0.1), // green
+    new THREE.Color(0.1, 0.1, 0.9), // blue
+    //new THREE.Color(1, 1, 1) // white
   ];
 
   for (let i = 0; i < numLights; i++) {
     const angle = i * (Math.PI * 2) / numLights;
-    const light = new THREE.SpotLight( lightColors[i%4], 100 );
-    light.position.set(Math.cos(angle) * lightRadius, lightHeight, Math.sin(angle) * lightRadius);
-    //light.angle = Math.PI / 4;
-    light.penumbra = 0.3;
+    const light = new THREE.SpotLight( lightColors[i%lightColors.length], 100 );
+    light.position.set(
+      Math.cos(angle) * lightRadius, 
+      lightHeight, 
+      Math.sin(angle) * lightRadius
+    );
+    light.angle = Math.PI / 3.5;
+    light.penumbra = 0.1;
     light.castShadow = true;
     light.shadow.mapSize.width = 2048;
     light.shadow.mapSize.height = 2048;
-    light.shadow.camera.near = 8;
+    light.shadow.camera.near = 0.1;
     light.shadow.camera.far = 200;
     light.shadow.bias = 0.002;
     light.shadow.radius = 4;
@@ -112,8 +127,14 @@ function initLights(scene) {
     scene.add(targetObject);
     light.target = targetObject;
 
-    const newMesh = new THREE.Mesh(new THREE.BoxGeometry(0.2,0.2,0.2), new MeshBasicNodeMaterial({color: lightColors[i%4]}));
-    newMesh.position.set(Math.cos(angle) * lightRadius, lightHeight, Math.sin(angle) * lightRadius)
+    const newMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2,0.2,0.2), 
+      new MeshBasicNodeMaterial({color: lightColors[i%lightColors.length]})
+    );
+    newMesh.position.set(
+      Math.cos(angle) * lightRadius, 
+      lightHeight, 
+      Math.sin(angle) * lightRadius);
     scene.add(newMesh);
     scene.add(light);
   }
@@ -122,7 +143,7 @@ function initLights(scene) {
 function setupScene() {
   let scene = new THREE.Scene();
   scene.background = new THREE.Color("#0d0c18");
-  scene.fog = new THREE.Fog( 0x222244, 5, 29 );
+  scene.fog = new THREE.Fog( 0x222244, 5, 100 );
   return scene;
 }
 
@@ -134,7 +155,6 @@ function setupCamera() {
   return camera;
 }
 
-let fps = 0.0;
 async function animate(scene, camera, renderer, statsGL, time, benchmarkData) {
   //renderer.clearAsync();
 
@@ -149,7 +169,8 @@ async function animate(scene, camera, renderer, statsGL, time, benchmarkData) {
   // Update object rotations
   scene.traverse((object) => {
     if (object instanceof THREE.Mesh && object.userData.id != 1) {
-      object.rotation.y += fps * 0.00005;//rotateY(fps * 0.00005);
+      object.rotation.x += fps * 0.00005;
+      object.rotation.y += fps * 0.0001;//rotateY(fps * 0.00005);
     }
   });
 
@@ -165,10 +186,10 @@ export function lightsThree(rendererType, statsGL, benchmarkData) {
   document.body.appendChild(canvas);
 
   // loader
-  ///const loadingManager = new THREE.LoadingManager();
-  //const textureLoader = new THREE.TextureLoader(loadingManager);
-  //const texDiffuse = textureLoader.load('scripts/benchmarks/textures/hedge03Diffuse2k.jpg');
-  //const texNormal = textureLoader.load('scripts/benchmarks/textures/hedge03normal2k.jpg');
+  const loadingManager = new THREE.LoadingManager();
+  const textureLoader = new THREE.TextureLoader(loadingManager);
+  const texDiffuse = textureLoader.load('scripts/benchmarks/textures/hedge03Diffuse2k.jpg');
+  const texNormal = textureLoader.load('scripts/benchmarks/textures/hedge03normal2k.jpg');
 
   // benchmark
   let scene = setupScene();
@@ -177,18 +198,24 @@ export function lightsThree(rendererType, statsGL, benchmarkData) {
 
   // geometries
   const geometries = initGeometries();
-  const numObjects = 40; // Number of objects to create
-  initMeshes( scene, geometries, numObjects );
+  const numObjects = NUM_OBJECTS; // Number of objects to create
+  initMeshes( scene, geometries, numObjects, texDiffuse, texNormal );
 
   // lights
   initLights(scene);
 
-  //lazy delay implementation so everything loads properly (important for WebGL)
+  //lazy delay implementation so everything loads properly (mostly for WebGL)
   let shouldRender = false;
+  let delay = 9000;
+  if (rendererType == 'webgl')
+  {
+    delay = 20000;
+  }
 
   setTimeout(() => {
     console.info('benchmark started');
     shouldRender = true;
+    camera.updateProjectionMatrix();
 
     // stats
     statsGL.init( renderer );
@@ -216,7 +243,7 @@ export function lightsThree(rendererType, statsGL, benchmarkData) {
       const dataElement = document.getElementById('benchmarkData');
       dataElement.value = csvContent;
     }, 10000);
-  }, 11000);
+  }, delay);
 
   // animate
   renderer.renderAsync(scene, camera); // loading first frame before benchmark starts
