@@ -35,15 +35,6 @@ function initMeshes(scene, geometries, numObjects) {
     geometryIds.push(batchedMesh.addGeometry(geometries[i]));
   }
 
-  /*
-  const boxRadius = 2.9;
-        for (let i = 0; i < numBoxes; i++) {
-          const angle = i * (Math.PI * 2) / numBoxes;
-          const position = new BABYLON.Vector3(Math.cos(angle) * boxRadius, Math.random() * 2.5 + 0.2, Math.sin(angle) * boxRadius);
-
-          const boxData = setupBoxes(scene, position, material1);
-          boxes.push(boxData);
-        }*/
   const boxRadius = 10;
   for (let i = 0; i < numObjects; i++) {
     const geometryId = geometryIds[i % geometries.length];
@@ -73,10 +64,6 @@ function initMeshes(scene, geometries, numObjects) {
 
   scene.add(batchedMesh);
   //scene.add(plane);
-}
-
-function randomizeRotationSpeed() {
-  return new THREE.Vector3(Math.random() * 0.005, Math.random() * 0.01, 0); // Random rotation speed vector
 }
 
 function setupScene() {
@@ -142,7 +129,7 @@ async function animate(scene, camera, renderer, statsGL, time, benchmarkData) {
   await renderer.renderAsync(scene, camera);
 }
 
-export function loadGeometryBenchmark2(rendererType, statsGL, benchmarkData) {
+export function loadNormalsThree(rendererType, statsGL, benchmarkData) {
   // canvas
   let canvas = document.createElement('canvas');
   canvas.width = 1440;

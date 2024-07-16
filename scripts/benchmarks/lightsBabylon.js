@@ -32,7 +32,7 @@ async function createEngine(canvas, rendererType) {
 }
 
 function setupLight(scene, position, color, material){
-  const light = new BABYLON.SpotLight("light", position, new BABYLON.Vector3(0, -1, 0), Math.PI / 1.7, 2, scene); //spot light ( new BABYLON.Vector3(0, -1, 0), Math.PI / 2, 2, )
+  const light = new BABYLON.SpotLight("light", position, new BABYLON.Vector3(0, -1, 0), Math.PI / 1.7, 2, scene);
   light.intensity = 1.6;
   light.diffuse = color;
   light.specular = new BABYLON.Color3(0.2, 0.2, 0.2);
@@ -93,7 +93,6 @@ export function lightsBabylon(rendererType, statsGL, benchmarkData) {
           new BABYLON.Color3(0.1, 0.8, 0.1), //green
           new BABYLON.Color3(0.1, 0.1, 0.8), //blue
           new BABYLON.Color3(1, 1, 1) //white
-
         ]
 
         const materials = [
