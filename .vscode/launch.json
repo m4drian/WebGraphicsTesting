@@ -6,12 +6,11 @@
     "configurations": [
         
         {
-            "type": "msedge",
+            "type": "chrome",
             "request": "launch",
             "name": "Launch Program",
             "url": "http://localhost:5173",
             "webRoot": "${workspaceFolder}",
-            "runtimeExecutable": "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
             "preLaunchTask": "npm dev"
         }
     ]
