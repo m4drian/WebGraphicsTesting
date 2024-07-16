@@ -27,7 +27,6 @@
     "@babylonjs/core": "^7.15.0",
     "@babylonjs/materials": "^7.15.0",
     "lil-gui": "^0.19.2",
-    "playcanvas": "^1.71.6",
     "stats-gl": "^2.2.8",
     "three": "^0.166.0"
   }
