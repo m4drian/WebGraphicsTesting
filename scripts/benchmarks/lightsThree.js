@@ -47,21 +47,21 @@ function initGeometries() {
   return geometries;
 }
 
-function createMaterial(texDiffuse, texNormal, color) {
+function createMaterial(texDiffuse, texNormal, color = 0xFFFFFF, shininess = 0.5, specular = 0x666666) {
   let material = null;
   if(texDiffuse && texNormal)
   {
     material = new MeshPhongNodeMaterial({
-      color: color || 0x777777,
-      shininess: 0.05,
-      specular: 0x222222,
+      color: color,
+      shininess: shininess,
+      specular: specular,
       map: texDiffuse,
       normalMap: texNormal
     } );
   }
   else {
     material = new MeshPhongNodeMaterial({
-      color: color || 0x777777,
+      color: 0x777777,
       shininess: 0.05,
       specular: 0x222222
     } );
@@ -72,14 +72,15 @@ function createMaterial(texDiffuse, texNormal, color) {
 
 function initMeshes(scene, geometries, numObjects, texDiffuse, texNormal) {
   const material = createMaterial(texDiffuse, texNormal);
-  const material2 = createMaterial(texDiffuse, texNormal, 0x000000);
+  const material2 = createMaterial(texDiffuse, texNormal, 0x666666, 0.01, 0x222222);
 
-  //object to make rotation easier
-  let parentObject = new THREE.Object3D();
-  scene.add(parentObject);
+  //group to make rotation easier
+  //const group = new THREE.Group();
+  //group.userData.id = 3;
+  //group.name = "boxGroup";
 
   // regular mesh creation
-  const boxRadius = 4;
+  const boxRadius = 6;
   for (let i = 0; i < numObjects; i++) {
     const angle = i * (Math.PI * 2) / numObjects;
     const newMesh = new THREE.Mesh(geometries[i%3], material);
@@ -90,10 +91,13 @@ function initMeshes(scene, geometries, numObjects, texDiffuse, texNormal) {
       Math.sin(angle) * boxRadius
     );
     newMesh.castShadow = true;
+    newMesh.userData.id = 3;
     //newMesh.receiveShadow = true;
-    parentObject.add(newMesh);
+    //group.add(newMesh);
+    newMesh.center
     scene.add(newMesh);
   }
+  //scene.add(group);
 
   // batching meshes
   /*const geometryCount = numObjects;
@@ -148,9 +152,9 @@ function initLights(scene) {
   const lightHeight = 6;
 
   const lightColors = [
-    new THREE.Color(0.9, 0.1, 0.1), // red
-    new THREE.Color(0.1, 0.9, 0.1), // green
-    new THREE.Color(0.1, 0.1, 0.9), // blue
+    new THREE.Color(1, 0, 0), // red
+    new THREE.Color(0, 1, 0), // green
+    new THREE.Color(0, 0, 1), // blue
     //new THREE.Color(1, 1, 1) // white
   ];
 
@@ -185,6 +189,7 @@ function initLights(scene) {
       Math.cos(angle) * lightRadius, 
       lightHeight, 
       Math.sin(angle) * lightRadius);
+    newMesh.userData.id = 1;
     scene.add(newMesh);
     scene.add(light);
   }
@@ -218,9 +223,10 @@ async function animate(scene, camera, renderer, statsGL, time, benchmarkData) {
 
   // Update object rotations
   scene.traverse((object) => {
-    if (object instanceof THREE.Mesh && object.userData.id != 1) {
+    if (/*(object instanceof THREE.Mesh && object.userData.id != 1) || */object.userData.id === 3) {
       object.rotation.x += fps * 0.00005;
-      object.rotation.y += fps * 0.0001;//rotateY(fps * 0.00005);
+      object.rotation.y += fps * 0.0001;
+      //object.rotateY(fps * 0.00005);
     }
   });
 
@@ -238,8 +244,8 @@ export function lightsThree(rendererType, statsGL, benchmarkData) {
   // loader
   const loadingManager = new THREE.LoadingManager();
   const textureLoader = new THREE.TextureLoader(loadingManager);
-  const texDiffuse = textureLoader.load('scripts/benchmarks/textures/hedge03Diffuse2k.jpg');
-  const texNormal = textureLoader.load('scripts/benchmarks/textures/hedge03normal2k.jpg');
+  const texDiffuse = textureLoader.load('scripts/benchmarks/textures/hedge03Diffuse1k.jpg');
+  const texNormal = textureLoader.load('scripts/benchmarks/textures/hedge03normal1k.jpg');
 
   // benchmark
   let scene = setupScene();
