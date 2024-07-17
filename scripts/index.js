@@ -16,7 +16,7 @@ const benchmarkData = [];
 
 // GL stats
 let statsGL = new GlStats( {
-    logsPerSecond: 20,
+    logsPerSecond: 10,
     samplesLog: 200, // collect logs for 10 seconds
     precision: 2,
     horizontal: false

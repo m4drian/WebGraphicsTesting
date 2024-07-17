@@ -31,7 +31,7 @@ def extract_numbers(text):
 def save_to_file(data, filename):
   with open(filename, 'w') as f:
     for timestamp, duration in data:
-      f.write(f"{timestamp},{duration}\n")
+      f.write(f"{duration/1000}\n")
 
 def extract_gpu_task_lines(filename):
   with open(filename, 'r') as f:
@@ -39,15 +39,16 @@ def extract_gpu_task_lines(filename):
     extracted_data = []
     for line in gpu_task_lines:
       dur, ts = extract_numbers(line)
-      extracted_data.append((int(ts), int(dur)))
+      if dur:
+        extracted_data.append((int(ts), int(dur)))
 
     durations_per_second = calculate_durations_per_second(extracted_data)
 
-    save_to_file(durations_per_second, f"{filename}" + "GPUoutput.txt")
+    save_to_file(durations_per_second, f"{filename}" + "GPUoutput.csv")
 
-def process_trace_files(directory):
-  for filename in glob.glob(os.path.join(directory, 'Trace-*.json')):
+def process_json_files(directory):
+  for filename in glob.glob(os.path.join(directory, '*.json')):
     extract_gpu_task_lines(filename)
 
 directory = "./Logs/"
-process_trace_files(directory)
+process_json_files(directory)
