@@ -5,9 +5,9 @@ import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 //find object amount that caps benchmark, do it 3 more times
 //100, 1000, 10000, x2, x3, x5
-let NUM_OBJECTS = 100;
-let T_DELAY = 6000;
-let T_TIME = 12000;
+const NUM_OBJECTS = 100;
+const T_DELAY = 6000;
+const T_TIME = 12000;
 
 function initGeometries() {
   const geometries = [

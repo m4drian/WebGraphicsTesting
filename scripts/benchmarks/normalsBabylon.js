@@ -2,7 +2,7 @@ import * as BABYLON from '@babylonjs/core';
 import * as BabylonMaterials from '@babylonjs/materials';
 
 const NUM_BOXES = 10000;
-let T_TIME = 12000;
+const T_TIME = 12000;
 
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {

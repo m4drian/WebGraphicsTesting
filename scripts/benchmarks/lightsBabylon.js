@@ -3,7 +3,8 @@ import * as BABYLON from '@babylonjs/core';
 
 const NUM_BOXES = 700;
 const NUM_LIGHTS = 6; //shouldnt exceed 6 for this example
-let T_TIME = 12000;
+const T_TIME = 12000;
+const USE_TEXTURES = true;
 
 async function createEngine(canvas, rendererType) {
   if (rendererType === 'webgl') {
@@ -135,10 +136,13 @@ export function lightsBabylon(rendererType, statsGL, benchmarkData) {
         material1.diffuseColor = mats[4];
         material1.specularColor = mats[4];
         material1.ambientColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-        const diffuseTex = new BABYLON.Texture("scripts/benchmarks/textures/hedge03Diffuse2k.jpg", scene);
-        material1.diffuseTexture = diffuseTex;
-        material1.bumpTexture = new BABYLON.Texture("scripts/benchmarks/textures/hedge03normal2k.jpg", scene);
-        material1.emissiveTexture = diffuseTex;
+        if(USE_TEXTURES)
+        {
+          const diffuseTex = new BABYLON.Texture("scripts/benchmarks/textures/hedge03Diffuse2k.jpg", scene);
+          material1.diffuseTexture = diffuseTex;
+          material1.emissiveTexture = diffuseTex;
+          material1.bumpTexture = new BABYLON.Texture("scripts/benchmarks/textures/hedge03normal2k.jpg", scene);
+        }
         material1.emissiveIntensity = 0.3;
         material1.maxSimultaneousLights = numLights;
 

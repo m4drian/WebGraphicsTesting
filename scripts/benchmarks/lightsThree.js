@@ -4,8 +4,9 @@ import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 const NUM_OBJECTS = 20;
 const NUM_LIGHTS = 14;
-let T_DELAY = 12000;
-let T_TIME = 12000;
+const T_DELAY = 12000;
+const T_TIME = 12000;
+const USE_TEXTURES = false;
 
 let fps = 0.0;
 
@@ -47,32 +48,28 @@ function initGeometries() {
   return geometries;
 }
 
-function createMaterial(texDiffuse, texNormal, color = 0xFFFFFF, shininess = 0.5, specular = 0x666666) {
-  let material = null;
-  if(texDiffuse && texNormal)
-  {
-    material = new MeshPhongNodeMaterial({
-      color: color,
-      shininess: shininess,
-      specular: specular,
-      map: texDiffuse,
-      normalMap: texNormal
-    } );
-  }
-  else {
-    material = new MeshPhongNodeMaterial({
-      color: 0x777777,
-      shininess: 0.05,
-      specular: 0x222222
-    } );
-  }
+function createMaterial(texDiffuse, texNormal, color = 0x777777, shininess = 0.05, specular = 0x222222) {
+  let material = new MeshPhongNodeMaterial({
+    color: color,
+    shininess: shininess,
+    specular: specular,
+    map: texDiffuse || null,
+    normalMap: texNormal || null
+  } );
   material.castShadow = true;
   return material;
 }
 
 function initMeshes(scene, geometries, numObjects, texDiffuse, texNormal) {
-  const material = createMaterial(texDiffuse, texNormal);
-  const material2 = createMaterial(texDiffuse, texNormal, 0x666666, 0.01, 0x222222);
+
+  let tex1 = null;
+  let tex2 = null;
+  if(USE_TEXTURES){
+    tex1 = texDiffuse;
+    tex2 = texNormal;
+  }
+  const material = createMaterial(tex1, tex2, 0xFFFFFF, 0.5, 0x666666);
+  const material2 = createMaterial(tex1, tex2, 0x666666, 0.01, 0x222222);
 
   //group to make rotation easier
   //const group = new THREE.Group();
