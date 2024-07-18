@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
+//200,400,600,800,1000,1200
 const NUM_OBJECTS = 200;
 const NUM_LIGHTS = 6;
 const T_DELAY = 6000;

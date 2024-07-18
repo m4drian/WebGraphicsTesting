@@ -1,9 +1,10 @@
 import * as BABYLON from '@babylonjs/core';
 //import * as BabylonMaterials from '@babylonjs/materials';
 
-const NUM_BOXES = 700;
+//1200, 1000, 800, 600, 400, 200
+const NUM_BOXES = 400;
 const NUM_LIGHTS = 6; //shouldnt exceed 6 for this example
-const T_TIME = 12000;
+const T_TIME = 24000;
 const USE_TEXTURES = true;
 
 async function createEngine(canvas, rendererType) {
