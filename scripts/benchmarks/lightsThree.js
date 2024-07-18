@@ -265,7 +265,15 @@ export function lightsThree(rendererType, statsGL, benchmarkData) {
 
   // geometries
   const geometries = initGeometries();
-  const numObjects = NUM_OBJECTS; // Number of objects to create
+  const userInputElement = document.getElementById("userNumber");
+  const userNumber = parseFloat(userInputElement.value); // Convert to a number
+  let numObjects = NUM_OBJECTS;
+  // Check if user entered a number and handle empty input
+  if (isNaN(userNumber) || userNumber === "") {
+    console.log("Using default value:", NUM_OBJECTS);
+  } else {
+    numObjects = userNumber;
+  }
   initMeshes( scene, geometries, numObjects, texDiffuse, texNormal );
 
   // lights

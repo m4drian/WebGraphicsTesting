@@ -89,7 +89,15 @@ export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
 
         //setup boxes with normal material
         let boxes = [];
-        const numBoxes = NUM_BOXES;
+        const userInputElement = document.getElementById("userNumber");
+        const userNumber = parseFloat(userInputElement.value); // Convert to a number
+        let numBoxes = NUM_BOXES;
+        // Check if user entered a number and handle empty input
+        if (isNaN(userNumber) || userNumber === "") {
+          console.log("Using default value:", NUM_BOXES);
+        } else {
+          numBoxes = userNumber;
+        }
         const boxRadius = 2.9;
         for (let i = 0; i < numBoxes; i++) {
           const angle = i * (Math.PI * 2) / numBoxes;
