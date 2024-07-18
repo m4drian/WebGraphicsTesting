@@ -1,18 +1,26 @@
 # Development commands:
-- set up npm: 
+- set up npm:
+```
 npm install
-- development command: 
-npm run dev (or F5 in vscode)
+```
+- development command:
+```
+npm run dev
+```
+(or F5 in vscode)
 
 # In order to build the project:
-- build:npm run build
+- build:
+```
+npm run build
+```
 
 # How to launch the project:
 run command in console:
-
+```
 npm run preview
-
-vite will open on port 4173 by default
+```
+vite will open on port 4173 by default\
 it is required to open the project in a browser that supports WebGPU
 
 # Main Libraries Used:
