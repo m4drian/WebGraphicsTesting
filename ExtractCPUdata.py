@@ -5,7 +5,7 @@ import os
 def extract_numbers(text,prevTaskTime,extracted_data):
   ts_match = re.search(r'"ts":(\d+)}', text)
   if ts_match:
-    print(str(prevTaskTime) + " " + str(len(extracted_data)))
+    #print(str(prevTaskTime) + " " + str(len(extracted_data)))
     start_match = re.search(r'"startTime":(-?\d+\.\d+)', text)
     if prevTaskTime!=0:
       if start_match:
@@ -23,7 +23,7 @@ def extract_numbers(text,prevTaskTime,extracted_data):
 def save_to_file(data, filename):
   with open(filename, 'w') as f:
     for d in data:
-      f.write(f"{d},\n")
+      f.write(f"{d/1000},\n")
 
 def extract_cpu_task_lines(filename):
   with open(filename, 'r') as f:

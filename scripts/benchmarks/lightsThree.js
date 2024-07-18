@@ -289,9 +289,9 @@ export function lightsThree(rendererType, statsGL, benchmarkData) {
       cpuLogs.forEach(dataPoint => 
         {csvContent += dataPoint + ',\n'
       });
-      csvContent += 'fps,\n';
+      csvContent += 'fps\n';
       benchmarkData.forEach(dataPoint => 
-        {csvContent += dataPoint + ',\n'
+        {csvContent += dataPoint + '\n'
       });
       const dataElement = document.getElementById('benchmarkData');
       dataElement.value = csvContent;

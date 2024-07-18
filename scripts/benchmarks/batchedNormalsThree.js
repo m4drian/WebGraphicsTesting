@@ -4,8 +4,8 @@ import { MeshNormalNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 //find object amount that caps benchmark, do it 3 more times
-//100, 1000, 10000, x2, x3, x5
-const NUM_OBJECTS = 100;
+//1000, 10000, 20000, 40000, 80000, 160000
+const NUM_OBJECTS = 20000;
 const T_DELAY = 6000;
 const T_TIME = 12000;
 
@@ -190,9 +190,9 @@ export function loadNormalsThree(rendererType, statsGL, benchmarkData) {
       cpuLogs.forEach(dataPoint => 
         {csvContent += dataPoint + ',\n'
       });
-      csvContent += 'fps,\n';
+      csvContent += 'fps\n';
       benchmarkData.forEach(dataPoint => 
-        {csvContent += dataPoint + ',\n'
+        {csvContent += dataPoint + '\n'
       });
       const dataElement = document.getElementById('benchmarkData');
       dataElement.value = csvContent;
