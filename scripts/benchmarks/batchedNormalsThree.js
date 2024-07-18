@@ -7,7 +7,7 @@ import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 //1000, 10000, 20000, 40000, 80000, 160000
 const NUM_OBJECTS = 20000;
 const T_DELAY = 6000;
-const T_TIME = 12000;
+const T_TIME = 24000;
 
 function initGeometries() {
   const geometries = [

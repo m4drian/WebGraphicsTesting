@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from 'three/nodes';
 import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
-const NUM_OBJECTS = 20;
-const NUM_LIGHTS = 14;
-const T_DELAY = 12000;
-const T_TIME = 12000;
-const USE_TEXTURES = false;
+const NUM_OBJECTS = 200;
+const NUM_LIGHTS = 6;
+const T_DELAY = 6000;
+const T_TIME = 24000;
+const USE_TEXTURES = true;
 
 let fps = 0.0;
 
@@ -21,19 +21,32 @@ function setupRenderer(myCanvas, rendererType) {
   let renderer = null;
   // in this example WebGPU automatically sets alpha setting to "premultiplied" if true and "opaque" if false
   // WebGL has premultipliedAlpha set to true by default
-  renderer = new WebGPURenderer( { 
-    canvas: myCanvas, 
-    antialias: false, 
-    forceWebGL: selectWebGL, 
-    stencil: false, 
-    depth: false, 
-    alpha: true, 
-    powerPreference: "high-performance" 
-  } );
+  /*if (rendererType === 'webgl') {
+    renderer = new THREE.WebGLRenderer( { 
+      canvas: myCanvas, 
+      antialias: false, 
+      forceWebGL: true, 
+      stencil: false, 
+      depth: false, 
+      alpha: true, 
+      premultipliedAlpha: true, 
+      preserveDrawingBuffer: false, 
+      powerPreference: "high-performance" } );
+    } else {*/
+    renderer = new WebGPURenderer( { 
+      canvas: myCanvas, 
+      antialias: false, 
+      forceWebGL: selectWebGL, 
+      stencil: false, 
+      depth: false, 
+      alpha: true, 
+      powerPreference: "high-performance" 
+    } );
+  //}
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( 1440, 810 );
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.BasicShadowMap;
+  //renderer.shadowMap.enabled = true;
+  //renderer.shadowMap.type = THREE.BasicShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   return renderer;
 }
@@ -87,7 +100,7 @@ function initMeshes(scene, geometries, numObjects, texDiffuse, texNormal) {
       Math.random() * 2.5 + 0.5,
       Math.sin(angle) * boxRadius
     );
-    newMesh.castShadow = true;
+    //newMesh.castShadow = true;
     newMesh.userData.id = 3;
     //newMesh.receiveShadow = true;
     //group.add(newMesh);
@@ -136,8 +149,8 @@ function initMeshes(scene, geometries, numObjects, texDiffuse, texNormal) {
   plane.rotation.x = -Math.PI / 2;
   plane.position.y = -0.7;
   plane.userData.id = 1;
-  plane.receiveShadow = true;
-  plane.castShadow = true;
+  //plane.receiveShadow = true;
+  //plane.castShadow = true;
   plane.frustumCulled = false;
 
   scene.add(plane);
@@ -165,7 +178,7 @@ function initLights(scene) {
     );
     light.angle = Math.PI / 3.5;
     light.penumbra = 0.1;
-    light.castShadow = true;
+    //light.castShadow = true;
     light.shadow.mapSize.width = 2048;
     light.shadow.mapSize.height = 2048;
     light.shadow.camera.near = 0.1;
