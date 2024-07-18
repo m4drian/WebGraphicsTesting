@@ -147,8 +147,10 @@ export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
 
             // printing performance metrics
             let csvContent = 'cpu,\n';
-            cpuLogs.forEach(dataPoint => 
-              {csvContent += dataPoint + '\n'
+            cpuLogs.forEach(dataPoint => {
+              if(dataPoint != 0){
+                csvContent += dataPoint + '\n'
+              }
             });
             csvContent += 'fps\n';
             benchmarkData.forEach(dataPoint => 
