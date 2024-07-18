@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/icon" href="/assets/favicon-BmPjqTwp.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Graphics Testing</title>
+  <script type="module" crossorigin src="/assets/index-DnTcGMta.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DMaHXRmt.css">
+</head>
+<body>
+    <div id="button-container" style="position: relative;">
+        <select id="api-selector">
+            <option value="webgl">WebGL</option>
+            <option value="webgpu">WebGPU</option>
+        </select>
+        <select id="benchmark-selector">
+            <option value="geometry1">Three - Batched</option>
+            <option value="geometry2">Three - Lights</option>
+            <option value="babylon1">Babylon - Normals</option>
+            <option value="babylon2">Babylon - Lights</option>
+            <option value="play-canvas">Other</option>
+        </select>
+        <button id="confirm-button">Run Benchmark</button>
+    </div>
+    <div id="app"></div>
+    <textarea id="benchmarkData" style="width: 300px; height: 150px; overflow: auto; border: 1px solid black; resize:none;"></textarea>
+</body>
+</html>
