@@ -48,6 +48,7 @@ function setupBoxes(scene, position, material){
 }
 
 export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
+  benchmarkData = [];
   console.log(BABYLON)
 
   let canvas = document.createElement('canvas');
@@ -147,7 +148,7 @@ export function loadBabylonBenchmark(rendererType, statsGL, benchmarkData) {
             // printing performance metrics
             let csvContent = 'cpu,\n';
             cpuLogs.forEach(dataPoint => 
-              {csvContent += dataPoint + ',\n'
+              {csvContent += dataPoint + '\n'
             });
             csvContent += 'fps\n';
             benchmarkData.forEach(dataPoint => 

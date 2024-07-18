@@ -137,6 +137,7 @@ async function animate(scene, camera, renderer, statsGL, time, benchmarkData) {
 }
 
 export function loadNormalsThree(rendererType, statsGL, benchmarkData) {
+  benchmarkData = [];
   // canvas
   let canvas = document.createElement('canvas');
   canvas.width = 1440;
@@ -196,7 +197,7 @@ export function loadNormalsThree(rendererType, statsGL, benchmarkData) {
       // printing performance metrics
       let csvContent = 'cpu,\n';
       cpuLogs.forEach(dataPoint => 
-        {csvContent += dataPoint + ',\n'
+        {csvContent += dataPoint + '\n'
       });
       csvContent += 'fps\n';
       benchmarkData.forEach(dataPoint => 

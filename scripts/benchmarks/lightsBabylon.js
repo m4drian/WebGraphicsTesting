@@ -70,6 +70,7 @@ function setupBoxes(scene, position, material){
 
 export function lightsBabylon(rendererType, statsGL, benchmarkData) {
   console.log(BABYLON)
+  benchmarkData = [];
 
   let canvas = document.createElement('canvas');
   canvas.width = 1440;
@@ -236,7 +237,7 @@ export function lightsBabylon(rendererType, statsGL, benchmarkData) {
             // printing performance metrics
             let csvContent = 'cpu,\n';
             cpuLogs.forEach(dataPoint => 
-              {csvContent += dataPoint + ',\n'
+              {csvContent += dataPoint + '\n'
             });
             csvContent += 'fps\n';
             benchmarkData.forEach(dataPoint => 
